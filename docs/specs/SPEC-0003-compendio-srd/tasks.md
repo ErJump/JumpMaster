@@ -15,13 +15,13 @@
 - [x] Test con casi limite — 24 test
 
 ## Slice
-- [ ] `bestiary` + `StatBlock` in stile Monster Manual
-- [ ] `spells`
-- [ ] `items`
-- [ ] `rules` (sezioni + condizioni)
-- [ ] `glossary`
+- [x] `bestiary` + `StatBlock` in stile Monster Manual
+- [x] `spells`
+- [x] `items` (magici + equipaggiamento in un solo elenco)
+- [x] `rules` (sezioni + condizioni) con renderer markdown scritto a mano
+- [x] `glossary` (85 termini) + **ricerca bilingue** in tutto il compendio
 
 ## Verifiche
 - [x] Conteggi confermati nel database (1729 voci, idempotenza verificata con doppio import)
-- [ ] **Prova offline reale** (Wi-Fi staccato)
-- [ ] Attribuzione SRD visibile
+- [ ] **Prova offline reale** (Wi-Fi staccato) — da fare
+- [x] Attribuzione SRD visibile in home e su ogni scheda

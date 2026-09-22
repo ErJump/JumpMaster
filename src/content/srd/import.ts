@@ -9,7 +9,7 @@
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { readFileSync, existsSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import { SRD_DATASETS, SRD_DATA_DIR } from './datasets';
 import * as schema from '@/db/schema';
 import {

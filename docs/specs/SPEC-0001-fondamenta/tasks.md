@@ -26,9 +26,9 @@
 ## Design system
 - [x] `src/ui/theme.css` con i token delle due palette
 - [x] Font via `next/font` (auto-ospitati: nessuna rete a runtime)
-- [ ] Primitive: Card, Button, Input, SearchableList, Badge, EmptyState
-- [ ] Layout dell'app con navigazione generata dal registro
-- [ ] Home page
+- [x] Primitive: Panel, Button, Field, Badge, EmptyState, CompendiumBrowser, StatBlock, Markdown
+- [x] Layout dell'app con navigazione generata dal registro
+- [x] Home page
 
 ## Repo pubblico
 - [x] `LICENSE` (MIT), `NOTICE` (attribuzione SRD), `README.md`

@@ -7,54 +7,57 @@
 
 ## Su cosa si sta lavorando
 
-**M0 — Fondamenta** (quasi completa) e **M1 — Compendio** (fondamenta tecniche pronte).
+**M0 — Fondamenta: completa.** **M1 — Compendio: funzionante**, manca la verifica offline.
 
 ## Stato
 
-- ✅ Scaffold Next 16 + React 19 + TS strict + Tailwind 4 + Drizzle + SQLite; `next build` verde
-- ✅ `AGENTS.md`, `CLAUDE.md`, memory bank (7 file), ADR 0001–0005, 4 spec registrate
-- ✅ **Guard rail funzionanti e verificati**: R0–R5, hook `pre-commit`, workflow CI
-- ✅ Design system fantasy (`src/ui/theme.css`): due palette, font, fregi
-- ✅ Schema DB: tabelle `srd_*` + `campaigns` + `app_settings`
-- ✅ `core/rules` (caratteristiche, competenza, GS/PE) — 24 test
-- ✅ `core/dice` (parser + motore + resa) — 35 test
-- ✅ Migrazione `0000_initial` applicata: 12 tabelle
-- ✅ **Importer SRD completo e verificato**: 1729 voci nel database, idempotente
-- ✅ CI verde al primo push · repo pubblico online
-- 🔄 Primitive `src/ui/`, registro delle feature, layout, le 7 slice del compendio
+- ✅ Scaffold, guard rail, CI, memory bank, 7 ADR, 4 spec
+- ✅ `core/rules` e `core/dice` — moduli puri, 66 test
+- ✅ Importer SRD: 1729 voci, idempotente
+- ✅ Design system fantasy: due palette, Cinzel + EB Garamond, stat block stile Monster Manual
+- ✅ Registro delle feature → navigazione generata
+- ✅ **7 slice complete e provate nel browser**: campagne, bestiario, incantesimi, oggetti,
+  regole, glossario, dadi
+- ✅ `npm run build` verde: 15 rotte
+- ⏳ Verifica offline reale (Wi-Fi staccato) e prova a schermo condiviso su Discord
 
 ## Prossimo passo
 
-1. Primitive `src/ui/` (Card, Button, Input, SearchableList, Badge, EmptyState, StatBlock)
-2. Registro delle feature + layout con navigazione generata
-3. Le 7 slice: `campaigns`, `bestiary`, `spells`, `items`, `rules`, `glossary`, `dice`
-4. Verifica offline reale (Wi-Fi staccato) e prova a schermo condiviso
+1. **Verifica offline** staccando davvero il Wi-Fi (SPEC-0003 AC17)
+2. **Prova su Discord** a schermo condiviso, per il vincolo di leggibilità (AGENTS.md §6)
+3. Chiudere le spec di M1 portandole a `status: done`
+4. Aprire **M2 — Il Tavolo**: PG e PNG, Party Dashboard, Encounter Builder, Combat Tracker
 
 ## Decisioni recenti da ricordare
 
-- Regolamento **2014** (SRD 5.1), non 2024.
-- UI in italiano, **dati di gioco in inglese** + glossario IT↔EN.
-- Web app locale nel browser (PWA-installabile), non app desktop. Tauri resta in M6.
-- TypeScript 5.9 e non 7.x — vedi `docs/adr/ADR-0002`.
-- `better-sqlite3` **verificato funzionante** su Node 24: nessun fallback a libsql necessario.
+- Regolamento **2014** (SRD 5.1). UI italiana, dati di gioco in inglese.
+- **Ricerca bilingue**: il glossario traduce la ricerca prima di filtrare, così «copertura»
+  trova *Cover*. Senza, la ricerca italiana su dati inglesi sarebbe stata inutile — è emerso
+  provando l'app, non progettandola.
+- L'elenco del compendio vive nel **layout**, non nella pagina: resta montato passando da una
+  scheda all'altra, quindi ricerca e filtri non si azzerano.
+- Filtraggio **lato client** su metadati leggeri: risposta istantanea, niente viaggi al server.
+- `typedRoutes` disattivato (ADR-0007), ESLint 9 (ADR-0006), TypeScript 5.9 (ADR-0002).
 
 ## Trappole note
 
 - Non importare `better-sqlite3` da un Client Component (`src/db/client.ts` usa `server-only`).
 - Tailwind 4 non ha `tailwind.config.js`: il tema sta in `src/ui/theme.css` sotto `@theme inline`.
-- `Number('')` vale `0`, non `NaN` — già inciampati in `crFromLabel`, ora coperto da test.
-- Next 16 riscrive `tsconfig.json` al primo build (`jsx: react-jsx`, include dei tipi generati).
-- **ESLint 10 non funziona** con `eslint-config-next` 16: fissato a 9.39.5 (ADR-0006).
-- La CA dei mostri è un **array**: 7 mostri su 334 hanno una seconda voce condizionale.
-  Si prende la prima come principale, l'array completo resta in `data`.
+- `Number('')` vale `0`, non `NaN` — inciampati in `crFromLabel`, ora coperto da test.
+- Niente `setState` dentro `useEffect`: React 19 lo segnala come errore di lint. Per il tema
+  si usa `data-theme` + CSS, senza stato React.
+- La CA dei mostri è un **array**: 7 mostri su 334 hanno una voce condizionale. Si prende la prima.
+- Nel pannello del browser di Claude i click sintetici non raggiungono React: per provare
+  l'interattività serve invocare il gestore o usare il setter nativo del valore. **Non è un bug
+  dell'app** — verificato che i gestori funzionano.
 
 ## Milestone
 
 | # | Nome | Stato |
 |---|---|---|
-| M0 | Fondamenta | 🔄 quasi completa |
-| M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 in corso |
-| M2 | Il Tavolo (party, encounter builder, combat tracker) | ⏳ |
+| M0 | Fondamenta | ✅ completa |
+| M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 funzionante, manca verifica offline |
+| M2 | Il Tavolo (party, encounter builder, combat tracker) | ⏳ prossima |
 | M3 | Vista Giocatori (SSE, Discord) | ⏳ |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ⏳ |
 | M5 | Mappe (battlemap, fog of war) | ⏳ |

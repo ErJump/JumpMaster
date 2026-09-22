@@ -193,3 +193,17 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Mostra un elemento solo in una delle due palette. Serve all'interruttore del tema,
+   che così non ha bisogno di stato React né di sincronizzarsi col DOM dopo l'idratazione. */
+@utility only-dark {
+  :root[data-theme='light'] & {
+    display: none;
+  }
+}
+
+@utility only-light {
+  :root:not([data-theme='light']) & {
+    display: none;
+  }
+}
