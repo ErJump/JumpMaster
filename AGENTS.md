@@ -196,7 +196,9 @@ Una feature è "fatta" solo quando **tutte** queste caselle sono spuntate:
 - **Commenti**: spiegano il *perché*, mai il *cosa*. Una regola di D&D non ovvia va commentata con il
   riferimento (es. `// SRD 5.1, "Ability Checks"`).
 - **Nomi**: codice e identificatori in inglese, testo rivolto all'utente in italiano, sempre.
-- **Migrazioni**: generate con `npm run db:generate`. Non modificare mai un file in `src/db/migrations/` a mano.
+- **Migrazioni**: generate con `npm run db:generate`. Non modificare mai un file in
+  `src/db/migrations/` a mano. Si **applicano da sole** all'avvio (`src/db/client.ts`): è una
+  scelta deliberata per un'app locale il cui utente non è uno sviluppatore.
 
 ---
 

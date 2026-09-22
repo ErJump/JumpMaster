@@ -22,11 +22,12 @@
 
 ```bash
 npm install
-npm run setup     # migrazioni + import SRD
+npm run setup     # scarica e importa i dati SRD (serve la rete, una volta sola)
 npm run dev       # http://localhost:3000
 ```
 
-Il database finisce in `data/jumpmaster.db` (in `.gitignore`).
+Il database finisce in `data/jumpmaster.db` (in `.gitignore`). La cartella e le tabelle si
+creano da sole al primo avvio: `src/db/client.ts` crea la directory e applica le migrazioni.
 
 ## Dati SRD
 
@@ -57,5 +58,8 @@ Conteggi attesi dopo l'import:
 - **ESLint 9 e non 10.** `eslint-plugin-react`, incluso in `eslint-config-next`, usa
   `context.getFilename()`, rimossa in ESLint 10: con la 10 `npm run lint` non parte affatto.
   Vedi `docs/adr/ADR-0006`.
+- **Le pagine del pannello DM sono `force-dynamic`.** Senza, Next prerenderebbe l'elenco
+  delle campagne al momento della build, congelando i dati. Per un'app locale in cui tutto è
+  dato vivo, il rendering dinamico è l'unico corretto.
 - **Tailwind 4** usa la configurazione CSS-first (`@theme` in `src/ui/theme.css`): non esiste
   `tailwind.config.js` e non va creato.

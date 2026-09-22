@@ -23,6 +23,7 @@ ancora qualche criterio da provare con clic veri.
 - ✅ `npm run build` verde: 15 rotte
 - ✅ **Offline confermato**: 21 richieste, tutte a localhost, zero host esterni
 - ✅ **Hook `pre-commit` provato**: blocca davvero un commit senza memory bank aggiornato
+- ✅ **Prova da clone fresco**: build verde con database inesistente, 13 tabelle create da sole
 - ⏳ Prova a schermo condiviso su Discord — la sola cosa che deve fare Giampiero
 
 ## Prossimo passo
@@ -47,6 +48,10 @@ ancora qualche criterio da provare con clic veri.
 ## Trappole note
 
 - Non importare `better-sqlite3` da un Client Component (`src/db/client.ts` usa `server-only`).
+- Le pagine che leggono il database vanno **`force-dynamic`**, altrimenti Next le prerenderizza
+  e i dati restano congelati al momento della build.
+- Prima di dare per buona una modifica: provarla anche **da copia appena clonata**
+  (`JUMPMASTER_DB` su un percorso inesistente). Il locale ha sempre il database già pronto.
 - Tailwind 4 non ha `tailwind.config.js`: il tema sta in `src/ui/theme.css` sotto `@theme inline`.
 - `Number('')` vale `0`, non `NaN` — inciampati in `crFromLabel`, ora coperto da test.
 - Niente `setState` dentro `useEffect`: React 19 lo segnala come errore di lint. Per il tema

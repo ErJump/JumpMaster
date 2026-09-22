@@ -1,4 +1,5 @@
 import { PageHeader } from '@/ui/components/primitives';
+import { SetupNeeded } from '@/ui/components/SetupNeeded';
 import { BrowserLayout } from '@/ui/components/BrowserLayout';
 import { CompendiumBrowser } from '@/ui/components/CompendiumBrowser';
 import { listMonsters, monsterFacets } from '@/features/bestiary/queries';
@@ -19,6 +20,8 @@ export default function BestiaryLayout({ children }: { children: React.ReactNode
     badge: { label: monster.crLabel, tone: 'wax' as const, title: `Grado di Sfida ${monster.crLabel}` },
     facets: { cr: monster.crLabel, type: monster.type, size: monster.size },
   }));
+
+  if (monsters.length === 0) return <SetupNeeded what="il bestiario" />;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

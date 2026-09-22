@@ -44,7 +44,7 @@ Discord · Note wiki · Generatori narrativi · Mappe con fog of war. Vedi la
 
 ```bash
 npm install
-npm run setup   # migrazioni + import dei dati SRD (richiede rete, una volta sola)
+npm run setup   # scarica e importa i dati SRD (richiede rete, una volta sola)
 npm run dev     # → http://localhost:3000
 ```
 
@@ -74,7 +74,7 @@ aggiornato o se un confine architetturale viene violato.
 | Comando | Cosa fa |
 |---|---|
 | `npm run dev` | Avvia l'app |
-| `npm run setup` | Migrazioni + import SRD |
+| `npm run setup` | Scarica e importa i dati SRD |
 | `npm run guard` | ⚔ Verifica i guard rail di processo |
 | `npm test` | Test unitari |
 | `npm run typecheck` · `npm run lint` | Qualità |

@@ -21,7 +21,7 @@
     "db:migrate": "tsx src/db/migrate.ts",
     "srd:fetch": "tsx src/content/srd/fetch.ts",
     "srd:import": "tsx src/content/srd/import.ts",
-    "setup": "npm run db:migrate && npm run srd:import",
+    "setup": "npm run srd:fetch && npm run srd:import",
     "guard": "node scripts/guard.mjs",
     "prepare": "node scripts/install-hooks.mjs"
   },

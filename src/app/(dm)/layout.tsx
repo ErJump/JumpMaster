@@ -4,6 +4,15 @@ import { ThemeToggle } from '@/ui/components/ThemeToggle';
 import { getActiveCampaign } from '@/features/campaigns/queries';
 
 /**
+ * Ogni pagina del pannello DM legge dal database a ogni richiesta.
+ *
+ * Senza questo, Next prerenderebbe l'elenco delle campagne **al momento della build**:
+ * chi compila e poi lancia `npm start` si ritroverebbe con i dati congelati a quell'istante.
+ * Per un'app locale in cui tutto è dato vivo, il rendering dinamico è l'unico corretto.
+ */
+export const dynamic = 'force-dynamic';
+
+/**
  * Guscio del pannello di controllo del DM.
  *
  * La Vista Giocatori (M3) vivrà fuori da questo gruppo di rotte, con un layout tutto suo:

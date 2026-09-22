@@ -71,6 +71,15 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 
 ### Risolti
 
+- **La CI è fallita al terzo push** e ha scoperto un bug vero, non un capriccio
+  dell'ambiente: `data/` è in `.gitignore`, quindi su una copia appena clonata la cartella
+  non esiste e `new Database()` falliva con *"Cannot open database because the directory
+  does not exist"*. Chiunque avesse clonato il repo ci sarebbe finito dentro.
+  Risolto creando la cartella e **applicando le migrazioni da sole** all'avvio.
+- **La build prerenderizzava l'elenco campagne coi dati presenti al momento della compilazione.**
+  Emerso indagando lo stesso fallimento. Chi avesse fatto `npm run build && npm start` avrebbe
+  visto dati congelati. Risolto con `force-dynamic` sul layout del pannello DM.
+
 - `crFromLabel('')` restituiva `0` invece di `null`, perché `Number('')` vale `0`.
   Trovato da un test sui casi limite prima che arrivasse in una feature. Ora coperto.
 - `roll.ts` usava `require()` dentro un modulo ESM: sostituito con un import statico.
@@ -95,6 +104,7 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 | ~190 KB di testo regole spediti al client | Serve per la ricerca a pieno testo; su localhost non si nota | Se l'app venisse ospitata in rete |
 | Parser markdown scritto a mano | Il sottoinsieme SRD è chiuso e noto; evita un albero di dipendenze | Se servisse markdown completo |
 | Attacchi degli stat block non ancora cliccabili | Il motore dei dadi è pronto, ma è materia di M2 | M2, col combat tracker |
+| Migrazioni applicate automaticamente all'avvio | L'utente è un DM, non uno sviluppatore: non deve incontrare un "no such table" | Se l'app diventasse multi-processo |
 | Analisi degli import via regex nel guard | Zero dipendenze per proteggere 2 invarianti semplici | Se compaiono falsi negativi → `ts-morph` + ADR |
 | Solo 1 background e 9 razze | È tutto ciò che contiene l'SRD | M6, con Open5e |
 | Nessun import da D&D Beyond | Zona grigia ToS | Import/export JSON generico in M6 |
