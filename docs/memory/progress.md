@@ -20,11 +20,23 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
   per GS, punteggi passivi, media dei dadi vita, GS frazionari ⅛/¼/½, tabella dei PE.
 - **`core/dice`** — 35 test verdi: notazione completa, vantaggio/svantaggio, tieni/scarta,
   divisore, 20 e 1 naturali (compreso "un 20 scartato non è un critico"), rifiuto degli input non validi.
+- **Database** — migrazione `0000_initial` applicata, 12 tabelle create.
+- **Importer SRD** — 1729 voci importate e verificate nel database:
+  334 mostri · 319 incantesimi · 362 oggetti magici · 237 equipaggiamenti · 407 privilegi ·
+  33 sezioni di regole · 15 condizioni · 12 classi · 9 razze · 1 background.
+  - **Idempotenza (AC3)**: import eseguito due volte, conteggi invariati ✓
+  - **GS frazionari (AC6)**: 0.125→⅛, 0.25→¼, 0.5→½ ✓
+  - **Trucchetti (AC10)**: livello 0 → "Trucchetto" ✓
+  - **Controllo incrociato col manuale**: Aboleth CA 17 naturale, 135 PF (18d10+36), GS 10, 5900 PE ✓
+  - 19 test sul normalizzatore, inclusi i casi limite dei dati SRD
+- **CI** — workflow `guardrails` verde al primo push (guard, typecheck, lint, test, build).
+- **Repo pubblico** online: https://github.com/ErJump/JumpMaster
 
 ## 🔄 In corso
 
 - **M0**: mancano le primitive `src/ui/`, il registro delle feature, il layout e la home
-- **M1**: importer SRD, migrazioni, le 7 slice del compendio
+- **M1**: le 7 slice del compendio (`campaigns`, `bestiary`, `spells`, `items`, `rules`,
+  `glossary`, `dice`) — le fondamenta dati sono pronte
 
 ## ⏳ Da fare
 

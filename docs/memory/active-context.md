@@ -18,15 +18,17 @@
 - ✅ Schema DB: tabelle `srd_*` + `campaigns` + `app_settings`
 - ✅ `core/rules` (caratteristiche, competenza, GS/PE) — 24 test
 - ✅ `core/dice` (parser + motore + resa) — 35 test
-- 🔄 Importer SRD, migrazioni, feature del compendio, layout e navigazione
+- ✅ Migrazione `0000_initial` applicata: 12 tabelle
+- ✅ **Importer SRD completo e verificato**: 1729 voci nel database, idempotente
+- ✅ CI verde al primo push · repo pubblico online
+- 🔄 Primitive `src/ui/`, registro delle feature, layout, le 7 slice del compendio
 
 ## Prossimo passo
 
-1. Generare e applicare la prima migrazione
-2. `src/content/srd/`: `datasets.ts`, `fetch.ts`, `normalize.ts`, `import.ts`
-3. Verificare i conteggi attesi (334 mostri, 319 incantesimi, 362 oggetti, 33 regole)
-4. Primitive `src/ui/` + registro delle feature + layout con navigazione
-5. Le 7 slice: `campaigns`, `bestiary`, `spells`, `items`, `rules`, `glossary`, `dice`
+1. Primitive `src/ui/` (Card, Button, Input, SearchableList, Badge, EmptyState, StatBlock)
+2. Registro delle feature + layout con navigazione generata
+3. Le 7 slice: `campaigns`, `bestiary`, `spells`, `items`, `rules`, `glossary`, `dice`
+4. Verifica offline reale (Wi-Fi staccato) e prova a schermo condiviso
 
 ## Decisioni recenti da ricordare
 
@@ -42,6 +44,9 @@
 - Tailwind 4 non ha `tailwind.config.js`: il tema sta in `src/ui/theme.css` sotto `@theme inline`.
 - `Number('')` vale `0`, non `NaN` — già inciampati in `crFromLabel`, ora coperto da test.
 - Next 16 riscrive `tsconfig.json` al primo build (`jsx: react-jsx`, include dei tipi generati).
+- **ESLint 10 non funziona** con `eslint-config-next` 16: fissato a 9.39.5 (ADR-0006).
+- La CA dei mostri è un **array**: 7 mostri su 334 hanno una seconda voce condizionale.
+  Si prende la prima come principale, l'array completo resta in `data`.
 
 ## Milestone
 

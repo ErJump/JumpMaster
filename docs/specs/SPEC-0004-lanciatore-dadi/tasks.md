@@ -1,9 +1,9 @@
 # SPEC-0004 — Tasks
 
-- [ ] `types.ts`
-- [ ] `parse.ts` + test (inclusi input non validi)
-- [ ] `roll.ts` con RNG iniettabile + test deterministici
-- [ ] `format.ts`
+- [x] `types.ts`
+- [x] `parse.ts` + test (inclusi input non validi) — AC1, AC10
+- [x] `roll.ts` con RNG iniettabile + test deterministici — AC11
+- [x] `format.ts`
 - [ ] Feature `dice`: campo di input, pulsanti rapidi, vantaggio/svantaggio
 - [ ] Cronologia (50 tiri) con ripetizione
 - [ ] Interruttore tiro segreto

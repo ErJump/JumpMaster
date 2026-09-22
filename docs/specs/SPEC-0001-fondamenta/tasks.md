@@ -19,18 +19,18 @@
 ## Guard rail
 - [x] `scripts/guard.mjs` (R0–R5)
 - [x] `scripts/install-hooks.mjs` + `.githooks/pre-commit`
-- [ ] `.github/workflows/guardrails.yml`
-- [ ] Template di PR
-- [ ] **Verificare che il guard fallisca davvero** (AC3, AC4, AC5, AC6)
+- [x] `.github/workflows/guardrails.yml` — verde al primo push
+- [x] Template di PR
+- [x] **Verificare che il guard fallisca davvero** — AC3/AC5/AC6 provati con violazioni reali, exit 1
 
 ## Design system
-- [ ] `src/ui/theme.css` con i token delle due palette
-- [ ] Font via `next/font`
+- [x] `src/ui/theme.css` con i token delle due palette
+- [x] Font via `next/font` (auto-ospitati: nessuna rete a runtime)
 - [ ] Primitive: Card, Button, Input, SearchableList, Badge, EmptyState
 - [ ] Layout dell'app con navigazione generata dal registro
 - [ ] Home page
 
 ## Repo pubblico
-- [ ] `LICENSE` (MIT), `NOTICE` (attribuzione SRD), `README.md`
-- [ ] Repo pubblico `ErJump/JumpMaster` creato e primo push
-- [ ] CI verde
+- [x] `LICENSE` (MIT), `NOTICE` (attribuzione SRD), `README.md`
+- [x] Repo pubblico `ErJump/JumpMaster` creato e primo push
+- [x] CI verde
