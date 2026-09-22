@@ -45,15 +45,24 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 | **glossario** | 85 termini, ricerca in entrambe le lingue |
 | **dadi** | `4d6kh3` → 5, 5, ~~3~~, 6 = 16. Dado scartato barrato, cronologia, vantaggio disattivato dove non si applica |
 
+- **Offline confermato**: una sessione completa produce **21 richieste, tutte a
+  `localhost:3000`, zero host esterni**. I font sono auto-ospitati da `next/font`.
+  Se salta il Wi-Fi a metà sessione, l'app continua a funzionare.
+- **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
+  memory bank → rifiutato, commit non avvenuto.
+
 ## 🔄 In corso
 
-- **M1**: manca la verifica offline reale (Wi-Fi staccato) e la prova a schermo condiviso.
+- **M1**: SPEC-0001 e SPEC-0003 chiuse. Restano da provare a mano alcuni criteri di
+  SPEC-0002 (elenco, modifica, eliminazione, stato vuoto con più campagne) e di SPEC-0004
+  (pulsanti rapidi, interruttori vantaggio, tiro segreto, Invio).
 
 ## ⏳ Da fare
 
-- **SPEC-0003 AC17** — provare davvero con il Wi-Fi staccato.
 - **AGENTS.md §6** — provare a schermo condiviso su Discord e verificare la leggibilità.
+  È l'unica cosa che non posso verificare io: serve Giampiero davanti a Discord.
 - **SPEC-0002** — AC2, AC5, AC6, AC7 da riprovare a mano con più campagne.
+- **SPEC-0004** — AC5, AC6, AC8, AC9 da provare con clic veri.
 - Il resto: vedi la tabella delle milestone in `active-context.md`.
 
 ## 🐛 Problemi noti

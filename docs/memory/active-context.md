@@ -7,7 +7,9 @@
 
 ## Su cosa si sta lavorando
 
-**M0 — Fondamenta: completa.** **M1 — Compendio: funzionante**, manca la verifica offline.
+**M0 — Fondamenta: completa** (SPEC-0001 chiusa).
+**M1 — Compendio: funzionante e offline** (SPEC-0003 chiusa); SPEC-0002 e SPEC-0004 hanno
+ancora qualche criterio da provare con clic veri.
 
 ## Stato
 
@@ -19,14 +21,17 @@
 - ✅ **7 slice complete e provate nel browser**: campagne, bestiario, incantesimi, oggetti,
   regole, glossario, dadi
 - ✅ `npm run build` verde: 15 rotte
-- ⏳ Verifica offline reale (Wi-Fi staccato) e prova a schermo condiviso su Discord
+- ✅ **Offline confermato**: 21 richieste, tutte a localhost, zero host esterni
+- ✅ **Hook `pre-commit` provato**: blocca davvero un commit senza memory bank aggiornato
+- ⏳ Prova a schermo condiviso su Discord — la sola cosa che deve fare Giampiero
 
 ## Prossimo passo
 
-1. **Verifica offline** staccando davvero il Wi-Fi (SPEC-0003 AC17)
-2. **Prova su Discord** a schermo condiviso, per il vincolo di leggibilità (AGENTS.md §6)
-3. Chiudere le spec di M1 portandole a `status: done`
-4. Aprire **M2 — Il Tavolo**: PG e PNG, Party Dashboard, Encounter Builder, Combat Tracker
+1. **Prova su Discord** a schermo condiviso (AGENTS.md §6) — serve Giampiero
+2. Chiudere SPEC-0002 e SPEC-0004 provando a mano i criteri rimasti
+3. Aprire **M2 — Il Tavolo**: SPEC per PG e PNG, Party Dashboard, Encounter Builder e
+   **Combat Tracker** event-sourced (ADR-0005). Il motore dei dadi è già pronto per rendere
+   cliccabili gli attacchi negli stat block.
 
 ## Decisioni recenti da ricordare
 
@@ -56,7 +61,7 @@
 | # | Nome | Stato |
 |---|---|---|
 | M0 | Fondamenta | ✅ completa |
-| M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 funzionante, manca verifica offline |
+| M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 funzionante e offline; restano criteri da provare a mano |
 | M2 | Il Tavolo (party, encounter builder, combat tracker) | ⏳ prossima |
 | M3 | Vista Giocatori (SSE, Discord) | ⏳ |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ⏳ |

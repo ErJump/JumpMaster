@@ -6,7 +6,7 @@
       "dir": "SPEC-0001-fondamenta",
       "title": "Fondamenta del workspace",
       "milestone": "M0",
-      "status": "in-progress",
+      "status": "done",
       "features": []
     },
     {
@@ -15,15 +15,23 @@
       "title": "Gestione delle campagne",
       "milestone": "M1",
       "status": "in-progress",
-      "features": ["campaigns"]
+      "features": [
+        "campaigns"
+      ]
     },
     {
       "id": "SPEC-0003",
       "dir": "SPEC-0003-compendio-srd",
       "title": "Compendio SRD: bestiario, incantesimi, oggetti, regole, glossario",
       "milestone": "M1",
-      "status": "in-progress",
-      "features": ["bestiary", "spells", "items", "rules", "glossary"]
+      "status": "done",
+      "features": [
+        "bestiary",
+        "spells",
+        "items",
+        "rules",
+        "glossary"
+      ]
     },
     {
       "id": "SPEC-0004",
@@ -31,7 +39,9 @@
       "title": "Lanciatore di dadi",
       "milestone": "M1",
       "status": "in-progress",
-      "features": ["dice"]
+      "features": [
+        "dice"
+      ]
     }
   ]
 }

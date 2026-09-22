@@ -35,17 +35,26 @@ avvio e l'altro, mostrata sempre nell'intestazione così il DM sa dove sta scriv
 
 ## Criteri di accettazione
 
-- [ ] **AC1** — Posso creare una campagna indicando almeno il nome; compare nell'elenco.
+- [x] **AC1** — Posso creare una campagna indicando almeno il nome; compare nell'elenco.
 - [ ] **AC2** — L'elenco mostra le campagne con nome, ambientazione, livello del gruppo e stato.
-- [ ] **AC3** — Posso attivare una campagna; resta attiva **anche dopo aver riavviato l'app**.
-- [ ] **AC4** — La campagna attiva è sempre visibile nell'intestazione.
+- [x] **AC3** — Posso attivare una campagna; resta attiva **anche dopo aver riavviato l'app**.
+- [x] **AC4** — La campagna attiva è sempre visibile nell'intestazione.
 - [ ] **AC5** — Posso modificare tutti i campi.
 - [ ] **AC6** — L'eliminazione **chiede conferma** e mostra cosa verrà cancellato con essa.
 - [ ] **AC7** — Senza campagne l'app mostra uno stato vuoto che invita a crearne una, non una pagina bianca.
-- [ ] **AC8** — Le feature che richiedono una campagna (`requiresCampaign: true`) spiegano che serve
+- [x] **AC8** — Le feature che richiedono una campagna (`requiresCampaign: true`) spiegano che serve
       sceglierne una, invece di rompersi.
-- [ ] **AC9** — Tutti gli input passano da uno schema Zod; un nome vuoto mostra un errore comprensibile in italiano.
+- [x] **AC9** — Tutti gli input passano da uno schema Zod; un nome vuoto mostra un errore comprensibile in italiano.
 
 ## Fuori ambito
 
 Import/export della campagna (M6). Condivisione coi giocatori (M3).
+
+## Stato della verifica — 2026-09-22
+
+**Verificati nel browser**: creata «La Maledizione di Strahd» dal form, redirect a `/campagne/1`,
+diventata **attiva da sola** (nessuna campagna attiva prima), persistita in `campaigns` e
+`app_settings` (AC1, AC3, AC4, AC9).
+
+**Da riprovare a mano con più campagne**: AC2 (elenco), AC5 (modifica), AC6 (conferma di
+eliminazione), AC7 (stato vuoto). Il codice c'è, ma non li ho ancora provati uno per uno.
