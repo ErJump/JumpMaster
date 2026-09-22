@@ -1,0 +1,195 @@
+@import 'tailwindcss';
+
+/*
+ * JumpMaster — design system fantasy
+ *
+ * Due palette: "notte in taverna" (scura, DEFAULT) e "pergamena e inchiostro" (chiara).
+ * Lo scuro è il default perché è più riposante in sessione e regge meglio la compressione di Discord.
+ *
+ * ⚠ VINCOLO DISCORD (AGENTS.md §6): lo schermo viene condiviso e la compressione video
+ * distrugge il testo sottile su fondo decorato. Qui dentro vale sempre:
+ *   · contrasto ≥ 4.5:1
+ *   · nessun testo di corpo sotto 16px
+ *   · niente font light su texture
+ */
+
+/* `inline` fa sì che le utility risolvano la variabile al momento dell'uso:
+   è ciò che permette di cambiare tema senza rigenerare le classi. */
+@theme inline {
+  --color-ink: var(--jm-ink);
+  --color-ink-soft: var(--jm-ink-soft);
+  --color-ink-faint: var(--jm-ink-faint);
+
+  --color-bg: var(--jm-bg);
+  --color-surface: var(--jm-surface);
+  --color-surface-raised: var(--jm-surface-raised);
+  --color-border: var(--jm-border);
+  --color-border-strong: var(--jm-border-strong);
+
+  --color-gold: var(--jm-gold);
+  --color-gold-soft: var(--jm-gold-soft);
+  --color-wax: var(--jm-wax);
+  --color-wax-soft: var(--jm-wax-soft);
+  --color-bottle: var(--jm-bottle);
+  --color-arcane: var(--jm-arcane);
+
+  --font-display: var(--jm-font-display), 'Iowan Old Style', Georgia, serif;
+  --font-body: var(--jm-font-body), Georgia, 'Times New Roman', serif;
+  --font-mono: var(--jm-font-mono), ui-monospace, 'SF Mono', monospace;
+
+  --radius-sheet: 2px;
+}
+
+/* ── Notte in taverna (default) ─────────────────────────────────────── */
+:root {
+  --jm-bg: #14100c;
+  --jm-surface: #1e1811;
+  --jm-surface-raised: #2a2218;
+  --jm-border: #3b3022;
+  --jm-border-strong: #57452e;
+
+  --jm-ink: #ece0cc; /* 13.9:1 su --jm-bg */
+  --jm-ink-soft: #c4b49a; /* 8.6:1  */
+  --jm-ink-faint: #9b8a6f; /* 5.2:1 — il minimo ammesso, solo per testo secondario */
+
+  --jm-gold: #d9b64c;
+  --jm-gold-soft: #8a7231;
+  --jm-wax: #c1485b;
+  --jm-wax-soft: #7d2634;
+  --jm-bottle: #4c9a72;
+  --jm-arcane: #a583d4;
+
+  color-scheme: dark;
+}
+
+/* ── Pergamena e inchiostro ─────────────────────────────────────────── */
+[data-theme='light'] {
+  --jm-bg: #e8dcc0;
+  --jm-surface: #f4ead3;
+  --jm-surface-raised: #fbf5e6;
+  --jm-border: #c3ae85;
+  --jm-border-strong: #9c8459;
+
+  --jm-ink: #241c12; /* 13.1:1 su --jm-surface */
+  --jm-ink-soft: #4d3e2a;
+  --jm-ink-faint: #6f5c40; /* 5.1:1 */
+
+  --jm-gold: #7a5f16;
+  --jm-gold-soft: #9c7d2c;
+  --jm-wax: #8f1f30;
+  --jm-wax-soft: #a94254;
+  --jm-bottle: #1f5c3f;
+  --jm-arcane: #5b3d8a;
+
+  color-scheme: light;
+}
+
+/* ── Base ───────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    border-color: var(--jm-border);
+  }
+
+  html {
+    /* 17px: il corpo non scende mai sotto i 16px richiesti dal vincolo Discord. */
+    font-size: 17px;
+  }
+
+  body {
+    background-color: var(--jm-bg);
+    color: var(--jm-ink);
+    font-family: var(--font-body);
+    /* Texture pergamena: tenuta molto bassa, non deve mai disturbare la lettura. */
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% -10%, color-mix(in srgb, var(--jm-gold) 7%, transparent), transparent),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.015em;
+  }
+
+  /* Il fuoco da tastiera deve restare ovvio: al tavolo si va di fretta. */
+  :focus-visible {
+    outline: 2px solid var(--jm-gold);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--jm-gold) 35%, transparent);
+  }
+
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--jm-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--jm-border-strong);
+    border: 2px solid var(--jm-bg);
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--jm-gold-soft);
+  }
+}
+
+/* ── Fregi e ornamenti ──────────────────────────────────────────────── */
+@utility rule-gold {
+  /* Il filetto orizzontale dei manuali: sfuma verso i bordi. */
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--jm-gold-soft) 15%,
+    var(--jm-gold) 50%,
+    var(--jm-gold-soft) 85%,
+    transparent
+  );
+  border: 0;
+}
+
+@utility panel {
+  background-color: var(--jm-surface);
+  border: 1px solid var(--jm-border);
+  border-radius: 2px;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--jm-ink) 4%, transparent) inset,
+    0 2px 12px rgb(0 0 0 / 0.25);
+}
+
+@utility small-caps {
+  font-variant-caps: small-caps;
+  letter-spacing: 0.08em;
+}
+
+/* Capolettera miniato per l'apertura delle sezioni narrative. */
+@utility drop-cap {
+  &::first-letter {
+    font-family: var(--font-display);
+    float: left;
+    font-size: 3.1em;
+    line-height: 0.78;
+    padding-right: 0.08em;
+    padding-top: 0.08em;
+    color: var(--jm-gold);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

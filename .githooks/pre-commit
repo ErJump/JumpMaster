@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# Guard rail di JumpMaster — le regole sono in AGENTS.md §2.
+#
+# Per saltarlo in un caso eccezionale: git commit --no-verify
+# (ma se ti serve spesso, è la regola a essere sbagliata: discutila e cambiala.)
+
+node scripts/guard.mjs --staged || {
+  printf '\n  Commit bloccato dai guard rail. Vedi sopra come sistemare.\n\n'
+  exit 1
+}

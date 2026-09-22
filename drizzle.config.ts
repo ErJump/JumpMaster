@@ -1,0 +1,11 @@
+import { defineConfig } from 'drizzle-kit';
+
+export default defineConfig({
+  schema: './src/db/schema/index.ts',
+  out: './src/db/migrations',
+  dialect: 'sqlite',
+  dbCredentials: {
+    url: process.env.JUMPMASTER_DB ?? './data/jumpmaster.db',
+  },
+  casing: 'snake_case',
+});

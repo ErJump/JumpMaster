@@ -1,0 +1,48 @@
+name: guardrails
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Un push che arriva mentre gira il job precedente lo annulla: non ha senso
+# tenere in vita una verifica su codice già superato.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Il guard confronta HEAD con la base del branch: serve la storia, non uno shallow clone.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+
+      - run: npm ci
+
+      # ⚔ Le regole di AGENTS.md §2. Prima di tutto il resto: se il processo non è
+      # stato rispettato, non ha senso discutere del codice.
+      - name: Guard rail (AGENTS.md)
+        env:
+          GUARD_BASE_REF: origin/${{ github.base_ref || 'main' }}
+        run: npm run guard -- --ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test unitari
+        run: npm test
+
+      - name: Build
+        run: npm run build

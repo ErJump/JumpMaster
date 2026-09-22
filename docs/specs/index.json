@@ -1,0 +1,37 @@
+{
+  "$comment": "Registro spec ↔ feature. Verificato da `npm run guard` (regole R1 e R3). Lo status deve combaciare con il front-matter di spec.md.",
+  "specs": [
+    {
+      "id": "SPEC-0001",
+      "dir": "SPEC-0001-fondamenta",
+      "title": "Fondamenta del workspace",
+      "milestone": "M0",
+      "status": "in-progress",
+      "features": []
+    },
+    {
+      "id": "SPEC-0002",
+      "dir": "SPEC-0002-gestione-campagne",
+      "title": "Gestione delle campagne",
+      "milestone": "M1",
+      "status": "in-progress",
+      "features": ["campaigns"]
+    },
+    {
+      "id": "SPEC-0003",
+      "dir": "SPEC-0003-compendio-srd",
+      "title": "Compendio SRD: bestiario, incantesimi, oggetti, regole, glossario",
+      "milestone": "M1",
+      "status": "in-progress",
+      "features": ["bestiary", "spells", "items", "rules", "glossary"]
+    },
+    {
+      "id": "SPEC-0004",
+      "dir": "SPEC-0004-lanciatore-dadi",
+      "title": "Lanciatore di dadi",
+      "milestone": "M1",
+      "status": "in-progress",
+      "features": ["dice"]
+    }
+  ]
+}

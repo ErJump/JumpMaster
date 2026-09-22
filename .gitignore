@@ -1,0 +1,39 @@
+# dipendenze
+node_modules/
+.pnp
+.pnp.*
+
+# build
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# ⚠️ Le TUE campagne: restano in locale anche con repo pubblico.
+data/
+!data/.gitkeep
+
+# dati SRD scaricati (rigenerabili con `npm run srd:fetch`)
+src/content/srd/data/
+
+# test
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+coverage/
+
+# ambiente
+.env
+.env*.local
+
+# OS / editor
+.DS_Store
+*.pem
+.vscode/*
+!.vscode/extensions.json
+.idea/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
