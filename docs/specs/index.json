@@ -42,6 +42,36 @@
       "features": [
         "dice"
       ]
+    },
+    {
+      "id": "SPEC-0005",
+      "dir": "SPEC-0005-personaggi-e-gruppo",
+      "title": "Personaggi (PG e PNG) e Party Dashboard",
+      "milestone": "M2",
+      "status": "in-progress",
+      "features": [
+        "characters"
+      ]
+    },
+    {
+      "id": "SPEC-0006",
+      "dir": "SPEC-0006-costruttore-scontri",
+      "title": "Costruttore di scontri",
+      "milestone": "M2",
+      "status": "in-progress",
+      "features": [
+        "encounters"
+      ]
+    },
+    {
+      "id": "SPEC-0007",
+      "dir": "SPEC-0007-combat-tracker",
+      "title": "Combat Tracker",
+      "milestone": "M2",
+      "status": "in-progress",
+      "features": [
+        "combat"
+      ]
     }
   ]
 }

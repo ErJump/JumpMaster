@@ -7,9 +7,11 @@
 
 ## Su cosa si sta lavorando
 
-**M0 — Fondamenta: completa** (SPEC-0001 chiusa).
-**M1 — Compendio: funzionante e offline** (SPEC-0003 chiusa); SPEC-0002 e SPEC-0004 hanno
-ancora qualche criterio da provare con clic veri.
+**M2 — Il Tavolo.** Spec scritte (0005, 0006, 0007), ADR-0008 sul bilanciamento, e il **core
+completo e testato**: matematica del personaggio, stima degli scontri, regole SRD dei punti
+ferita, riduttore del combattimento. Manca tutta l'interfaccia.
+
+M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 
 ## Stato
 
@@ -28,11 +30,11 @@ ancora qualche criterio da provare con clic veri.
 
 ## Prossimo passo
 
-1. **Prova su Discord** a schermo condiviso (AGENTS.md §6) — serve Giampiero
-2. Chiudere SPEC-0002 e SPEC-0004 provando a mano i criteri rimasti
-3. Aprire **M2 — Il Tavolo**: SPEC per PG e PNG, Party Dashboard, Encounter Builder e
-   **Combat Tracker** event-sourced (ADR-0005). Il motore dei dadi è già pronto per rendere
-   cliccabili gli attacchi negli stat block.
+1. Schema `characters`, `encounters`, `encounter_monsters`, `combat_events` + migrazione
+2. Slice `characters` + **Party Dashboard** (SPEC-0005)
+3. Slice `encounters` con il misuratore di difficoltà (SPEC-0006)
+4. Slice `combat` — il combat tracker (SPEC-0007), la feature più importante dell'app
+5. **Prova su Discord** a schermo condiviso — serve Giampiero
 
 ## Decisioni recenti da ricordare
 
@@ -44,6 +46,11 @@ ancora qualche criterio da provare con clic veri.
   scheda all'altra, quindi ricerca e filtri non si azzerano.
 - Filtraggio **lato client** su metadati leggeri: risposta istantanea, niente viaggi al server.
 - `typedRoutes` disattivato (ADR-0007), ESLint 9 (ADR-0006), TypeScript 5.9 (ADR-0002).
+- **Le tabelle di bilanciamento della Guida del DM non sono nell'SRD** e non esistono in nessuna
+  fonte aperta. La stima degli scontri è **nostra**, va dichiarata come tale nell'interfaccia e
+  i suoi numeri non combaceranno con quelli del manuale. Vedi ADR-0008.
+- I mostri muoiono a 0 PF, i PG tirano i salvezza contro morte: prassi di tavolo, scelta in
+  `core/events/hit-points.ts`.
 
 ## Trappole note
 
@@ -67,7 +74,7 @@ ancora qualche criterio da provare con clic veri.
 |---|---|---|
 | M0 | Fondamenta | ✅ completa |
 | M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 funzionante e offline; restano criteri da provare a mano |
-| M2 | Il Tavolo (party, encounter builder, combat tracker) | ⏳ prossima |
+| M2 | Il Tavolo (party, encounter builder, combat tracker) | 🔄 core fatto, manca l'interfaccia |
 | M3 | Vista Giocatori (SSE, Discord) | ⏳ |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ⏳ |
 | M5 | Mappe (battlemap, fog of war) | ⏳ |

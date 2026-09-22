@@ -51,8 +51,28 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M2 — il core (nessuna interfaccia ancora)
+
+- **`core/rules/character.ts`** — 13 test: modificatori, tiri salvezza, competenza ed
+  **esperienza** (che raddoppia, non somma due volte), punteggi passivi, iniziativa,
+  e la mappa delle 18 abilità alle caratteristiche giuste.
+- **`core/rules/encounter.ts`** — 19 test. Stima **nostra** (ADR-0008) su curva continua
+  `n^0.35` invece di una tabella a scalini, così passare da 6 a 7 mostri non fa saltare la
+  difficoltà. Verificato l'ancoraggio: un mostro di GS pari al livello risulta «impegnativo»,
+  e quattro goblin contro un gruppo di livello 1 risultano «duri», come da fama.
+- **`core/events/hit-points.ts`** — 30 test sulle regole SRD, incluse quelle che un DM alle
+  prime armi sbaglia: i temporanei **non si sommano**, il danno massiccio uccide all'istante
+  (con il confine esatto verificato a ±1), un critico a terra costa **due** fallimenti,
+  un 20 naturale rimette in piedi con 1 PF invece di stabilizzare.
+- **`core/events/combat-reduce.ts`** — 26 test. Ordinamento **deterministico** (senza, le righe
+  salterebbero da sole mentre il DM gioca), turni e round, rimozione durante il giro,
+  promemoria di concentrazione con la CD già calcolata, e l'annulla verificato risalendo
+  il registro più volte di seguito.
+
 ## 🔄 In corso
 
+- **M2**: core fatto e testato, manca **tutta l'interfaccia** — schema del database, slice
+  `characters`, `encounters`, `combat`.
 - **M1**: SPEC-0001 e SPEC-0003 chiuse. Restano da provare a mano alcuni criteri di
   SPEC-0002 (elenco, modifica, eliminazione, stato vuoto con più campagne) e di SPEC-0004
   (pulsanti rapidi, interruttori vantaggio, tiro segreto, Invio).
