@@ -130,6 +130,16 @@
       "milestone": "M5",
       "status": "done",
       "features": []
+    },
+    {
+      "id": "SPEC-0014",
+      "dir": "SPEC-0014-archivio-campagne",
+      "title": "Esportare e importare una campagna",
+      "milestone": "M6",
+      "status": "done",
+      "features": [
+        "archive"
+      ]
     }
   ]
 }

@@ -43,3 +43,25 @@ export function ButtonLink({
     </Link>
   );
 }
+
+/**
+ * Un file da scaricare con l'aspetto di un pulsante. È un `<a>` semplice, non un `Link`: il
+ * router di Next non deve provare a navigare verso un allegato.
+ */
+export function DownloadLink({
+  href,
+  variant = 'ghost',
+  className = '',
+  children,
+}: {
+  href: string;
+  variant?: ButtonVariant;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <a href={href} download className={`${BASE} ${VARIANTS[variant]} ${className}`}>
+      {children}
+    </a>
+  );
+}

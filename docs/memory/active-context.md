@@ -7,9 +7,11 @@
 
 ## Su cosa si sta lavorando
 
+**M6 — Integrazioni: in corso.** Fatto: **archivio** (SPEC-0014) — esportare e importare una
+campagna in un file. Restano: bestiario da Open5e, audio d'ambiente, app desktop.
+
 **M5 — Mappe: completa.** Battlemap con griglia, segnalini, righello e nebbia (SPEC-0012) e mappa
-del mondo con segnaposto collegati alle note (SPEC-0013), entrambe chiuse. Prossima: **M6 —
-Integrazioni** (Open5e, import/export campagna, audio, Tauri) — da scrivere la spec.
+del mondo con segnaposto collegati alle note (SPEC-0013), entrambe chiuse.
 
 **M4 — Narrativa: completa.** Note con collegamenti (SPEC-0009), sessioni Lazy DM col diario
 (SPEC-0010) e generatori (SPEC-0011), tutte chiuse.
@@ -49,8 +51,7 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 8. **Prova su Discord con la Vista Giocatori** — è il test che conta davvero per M3
 9. ✅ **M4 — Narrativa**
 10. ✅ **M5 — Mappe**
-11. **M6 — Integrazioni**: scegliere con Giampiero da cosa partire (import/export è il più utile
-    per non perdere le campagne)
+11. **M6 — Integrazioni**: ✅ archivio (SPEC-0014) · Open5e · audio d'ambiente · app desktop
 
 ## Decisioni recenti da ricordare
 
@@ -96,6 +97,15 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
   **rivelate** (`"col,riga"`): una mappa nuova nasce tutta coperta.
 - I segnalini si legano ai combattenti per `combatantId`; lo stato (morto, di turno) si legge dal
   combattimento in corso (`runningCombat` in `db/queries/combat-log.ts`), non si copia.
+- **Archivio (SPEC-0014)**: JSON con le immagini in base64, nessuna dipendenza. La logica
+  (`features/archive/archive.ts`) riceve database e cartella delle immagini **come parametri**:
+  così il test gira su un SQLite vero. Le righe dello schema sono `strictObject` e un test
+  confronta le chiavi esportate con le colonne: **una colonna nuova va aggiunta anche a
+  `features/archive/schema.ts`**, altrimenti il test fallisce (di proposito).
+- L'import è una **route**, non una Server Action (limite di corpo 10 MB): controlla `Origin` e
+  `Content-Type` perché le route non hanno i controlli delle Server Actions.
+- Le forme delle colonne JSON (segnalini, segnaposto, nebbia, preparazione) stanno in
+  `src/db/schema/json.ts`, non riesportate da `schema/index.ts`.
 - Le immagini caricate stanno in `src/db/files.ts` (spostato da `features/player`): le usano handout e mappe.
 
 ## Trappole note
@@ -137,6 +147,11 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
   in un ref (`latest` in `MapEditor`). Il sintomo fu un righello a 0 ft.
 - **Ogni canale verso i giocatori può tradire.** Nascondere il segnalino non bastava: il nome
   passava dalla riga del turno. Quando si nasconde qualcosa, cercarlo in **tutto** il JSON inviato.
+- **Un test verde non prova nulla finché non l'hai visto fallire.** Il giro completo dell'archivio
+  passava anche togliendo una colonna dall'import. Rompere il codice di proposito (mutazione) e
+  guardare il test diventare rosso.
+- **Un file immagine appartiene a una riga sola**: eliminare la riga cancella il file. Chi copia
+  righe (import, duplicazioni future) deve copiare anche il file.
 - Danno massiccio: 99 danni su un PG da 20 PF è morte istantanea (SRD). Nei test, per un PG
   «a terra» usare un avanzo sotto i PF massimi.
 - Nel pannello del browser di Claude i click sintetici non raggiungono React: per provare
@@ -153,4 +168,4 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 | M3 | Vista Giocatori (SSE, Discord) | ✅ funzionante, manca la prova di riconnessione |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ✅ completa |
 | M5 | Mappe (battlemap, fog of war, mondo) | ✅ completa |
-| M6 | Integrazioni (Open5e, audio, Tauri) | ⏳ |
+| M6 | Integrazioni (archivio, Open5e, audio, desktop) | 🔄 archivio fatto |

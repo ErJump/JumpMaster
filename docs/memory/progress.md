@@ -51,6 +51,15 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M6 — Archivio: esportare e importare una campagna (SPEC-0014, chiusa)
+
+- Una campagna in **un solo file JSON**, immagini comprese (base64). Si importa sempre come
+  campagna **nuova**: nulla di esistente viene toccato.
+- Giro completo provato da un **test su database SQLite vero** (migrazioni reali, file reali in
+  una cartella temporanea): stesso contenuto dopo esporta → importa → esporta.
+- Tutto o niente: un file manomesso non lascia mezza campagna né immagini orfane.
+- Eliminare una campagna ora cancella anche le sue immagini da `data/uploads/`.
+
 ### M5 — Mappa del mondo (SPEC-0013, chiusa)
 
 - Segnaposto aggiunti con un clic, spostati, rinominati, tolti. Il nome funziona come `[[Titolo]]`:

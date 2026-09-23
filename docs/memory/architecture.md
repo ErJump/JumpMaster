@@ -36,6 +36,11 @@ registrare una voce di menu* — mai toccare quindici file sparsi.
 | I5 | Tabelle `srd_*` in sola lettura a runtime | Rigenerabili; dati utente mai mescolati con SRD |
 | I6 | Ogni tabella di dominio ha `campaign_id` | Isolamento fra campagne senza logica speciale |
 | I7 | Una lettura usata da **più slice** sta in `src/db/queries/`, non in una delle slice | È il modo di condividere dati senza violare I2 (es. il registro del combattimento, letto da `combat` e da `player`) |
+| I8 | Un file immagine appartiene a **una sola riga** | Eliminare la riga cancella il file: chi copia righe copia anche il file (SPEC-0014) |
+
+Il livello dati condiviso, oltre a `db/queries/`, ha `db/files.ts` (le immagini in `data/uploads/`) e
+`db/schema/json.ts` (la forma delle colonne JSON, validata con Zod da chi scrive, da chi legge e
+dall'archivio).
 
 ## Decisioni portanti
 

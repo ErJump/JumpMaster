@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { db } from '@/db/client';
 import { maps } from '@/db/schema';
 import { deleteImage, saveImage } from '@/db/files';
-import { pinSchema, tokenSchema } from '@/db/queries/maps';
+import { fogSchema, pinsSchema, tokensSchema } from '@/db/schema/json';
 
 export interface NewMapState {
   error?: string;
@@ -59,9 +59,9 @@ const mapStateSchema = z.object({
   gridOffsetX: z.number().int().min(0).max(600),
   gridOffsetY: z.number().int().min(0).max(600),
   showGrid: z.boolean(),
-  fog: z.array(z.string().regex(/^-?\d+,-?\d+$/)).max(40_000),
-  tokens: z.array(tokenSchema).max(200),
-  pins: z.array(pinSchema).max(300),
+  fog: fogSchema,
+  tokens: tokensSchema,
+  pins: pinsSchema,
 });
 
 export type MapState = z.infer<typeof mapStateSchema>;

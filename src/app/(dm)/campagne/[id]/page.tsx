@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { PageHeader, Panel } from '@/ui/components/primitives';
+import { DownloadLink } from '@/ui/components/Button';
 import { CampaignForm } from '@/features/campaigns/components/CampaignForm';
 import { DeleteCampaignButton, ActivateButton } from '@/features/campaigns/components/CampaignActions';
 import { updateCampaign } from '@/features/campaigns/actions';
@@ -21,7 +22,12 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       <PageHeader
         title={campaign.name}
         subtitle={campaign.setting || undefined}
-        actions={<ActivateButton id={campaign.id} isActive={active?.id === campaign.id} />}
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <DownloadLink href={`/api/archivio/${campaign.id}`}>📦 Esporta</DownloadLink>
+            <ActivateButton id={campaign.id} isActive={active?.id === campaign.id} />
+          </div>
+        }
       />
 
       <Panel className="p-6">

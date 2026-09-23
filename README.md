@@ -40,6 +40,8 @@ la feature è progettata male.*
 - 🗓 **Sessioni** — preparazione in otto passi alla Lazy DM, diario con il riassunto dei
   combattimenti; i segreti non scoperti passano alla sessione successiva
 - 🔮 **Generatori** — PNG, taverne, botteghe, voci di paese, spunti, incontri, tesori
+- 📦 **Archivio** — una campagna in un solo file, immagini comprese: per non perderla mai, o per
+  portarla su un altro PC
 
 **Compendio offline**
 - 📖 334 mostri, 319 incantesimi, 599 oggetti, 48 regole e condizioni, glossario IT↔EN —
@@ -47,7 +49,7 @@ la feature è progettata male.*
 - 🎲 **Dadi** con notazione completa (`4d6kh3`, `2d20kh1`, `8d6/2`)
 
 ### In arrivo
-Più mostri da fonti aperte (Open5e), esportazione della campagna, audio d'ambiente. Vedi la
+Più mostri da fonti aperte (Open5e), audio d'ambiente, app desktop. Vedi la
 [roadmap](docs/memory/active-context.md).
 
 ## Requisiti

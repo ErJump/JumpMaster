@@ -31,8 +31,16 @@ export type SaveResult = { ok: true; file: string; width: number | null; height:
 export async function saveImage(file: File): Promise<SaveResult> {
   if (file.size === 0) return { ok: false, error: 'Il file è vuoto.' };
   if (file.size > MAX_IMAGE_BYTES) return { ok: false, error: 'L’immagine supera i 10 MB.' };
+  return saveImageBytes(new Uint8Array(await file.arrayBuffer()));
+}
 
-  const bytes = new Uint8Array(await file.arrayBuffer());
+/**
+ * Salva un'immagine già in memoria, ad esempio rientrata da un archivio (SPEC-0014). Stessi
+ * controlli di `saveImage`: il tipo si riconosce dai byte, il nome lo decide l'app.
+ */
+export async function saveImageBytes(bytes: Uint8Array): Promise<SaveResult> {
+  if (bytes.length === 0) return { ok: false, error: 'Il file è vuoto.' };
+  if (bytes.length > MAX_IMAGE_BYTES) return { ok: false, error: 'L’immagine supera i 10 MB.' };
   const type = detectImageType(bytes);
   if (!type) return { ok: false, error: 'Formato non supportato: usa PNG, JPEG, WebP o GIF.' };
 

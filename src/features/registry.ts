@@ -20,6 +20,7 @@ import { itemsFeature } from './items/feature.config';
 import { rulesFeature } from './rules/feature.config';
 import { glossaryFeature } from './glossary/feature.config';
 import { diceFeature } from './dice/feature.config';
+import { archiveFeature } from './archive/feature.config';
 import { FEATURE_GROUPS, type FeatureConfig, type FeatureGroup } from './types';
 
 export const FEATURES: readonly FeatureConfig[] = [
@@ -39,6 +40,7 @@ export const FEATURES: readonly FeatureConfig[] = [
   glossaryFeature,
   diceFeature,
   generatorsFeature,
+  archiveFeature,
 ];
 
 /** Le feature raggruppate e ordinate, come le mostra la navigazione. */
