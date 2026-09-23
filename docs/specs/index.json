@@ -160,6 +160,14 @@
       "features": [
         "ambience"
       ]
+    },
+    {
+      "id": "SPEC-0017",
+      "dir": "SPEC-0017-app-desktop",
+      "title": "JumpMaster come app sul desktop",
+      "milestone": "M6",
+      "status": "done",
+      "features": []
     }
   ]
 }

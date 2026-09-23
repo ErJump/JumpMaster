@@ -12,6 +12,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "app": "node scripts/app.mjs",
+    "app:install": "node scripts/app.mjs --install",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

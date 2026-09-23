@@ -54,7 +54,7 @@ la feature è progettata male.*
 - 🎲 **Dadi** con notazione completa (`4d6kh3`, `2d20kh1`, `8d6/2`)
 
 ### In arrivo
-App desktop. Vedi la
+Le prossime tappe sono da decidere insieme. Vedi la
 [roadmap](docs/memory/active-context.md).
 
 ## Requisiti
@@ -64,17 +64,30 @@ App desktop. Vedi la
 
 ## Avvio
 
+La prima volta:
+
 ```bash
 npm install
 npm run setup   # scarica e importa i dati SRD (richiede rete, una volta sola)
-npm run dev     # → http://localhost:3000
 ```
 
-Le tue campagne vivono in `data/jumpmaster.db`, **fuori dal controllo di versione**: il repo è
-pubblico, i tuoi dati restano tuoi. Per un backup basta copiare quel file.
+Poi, per giocare:
 
-> 💡 **Consiglio per Discord**: installa l'app come PWA dal browser. Si apre in una finestra dedicata
-> senza barre, molto più pulita da condividere.
+```bash
+npm run app     # compila se serve, avvia JumpMaster e apre la sua finestra (http://localhost:3210)
+```
+
+Su macOS, una volta sola: `npm run app:install` crea **JumpMaster.app** in `~/Applications`, con
+l'icona. Trascinala nel Dock e da lì in poi niente terminale. Per spegnere: `npm run app -- --stop`.
+
+Per sviluppare: `npm run dev` (→ http://localhost:3000).
+
+Le tue campagne vivono in `data/jumpmaster.db`, **fuori dal controllo di versione**: il repo è
+pubblico, i tuoi dati restano tuoi. Per un backup usa **📦 Archivio**: una campagna in un file,
+immagini e tracce comprese.
+
+> 💡 **Consiglio per Discord**: usa JumpMaster nella sua finestra (Safari: «File › Aggiungi al
+> Dock»; Chrome ed Edge: l'icona «Installa»). Senza barre e schede è molto più pulito da condividere.
 
 ## Come è fatto
 

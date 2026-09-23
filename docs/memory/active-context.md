@@ -7,9 +7,9 @@
 
 ## Su cosa si sta lavorando
 
-**M6 — Integrazioni: in corso.** Fatti: **archivio** (SPEC-0014) — esportare e importare una
-campagna in un file; **fonti aperte** (SPEC-0015) — mostri da Open5e; **atmosfera** (SPEC-0016) — audio di sottofondo.
-Resta: app desktop.
+**M6 — Integrazioni: completa.** Archivio (SPEC-0014), fonti aperte da Open5e (SPEC-0015),
+atmosfera (SPEC-0016), app desktop (SPEC-0017). **Il piano iniziale M0–M6 è finito**: le prossime
+tappe sono da scegliere con Giampiero (vedi «Prossimo passo»).
 
 **M5 — Mappe: completa.** Battlemap con griglia, segnalini, righello e nebbia (SPEC-0012) e mappa
 del mondo con segnaposto collegati alle note (SPEC-0013), entrambe chiuse.
@@ -52,7 +52,10 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 8. **Prova su Discord con la Vista Giocatori** — è il test che conta davvero per M3
 9. ✅ **M4 — Narrativa**
 10. ✅ **M5 — Mappe**
-11. **M6 — Integrazioni**: ✅ archivio (SPEC-0014) · ✅ fonti aperte (SPEC-0015) · ✅ atmosfera (SPEC-0016) · app desktop
+11. ✅ **M6 — Integrazioni**
+12. **Da fare con Giampiero**: `npm run app:install` sul suo Mac; ascoltare l'atmosfera (provata
+    solo misurando); la prova su Discord; i criteri residui di M1–M3. Poi decidere la prossima
+    milestone (idee: incantesimi e oggetti da Open5e, costruttore di PG, riconnessione della Vista)
 
 ## Decisioni recenti da ricordare
 
@@ -107,6 +110,9 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
   `open5e_*` (sola lettura, scritte solo dall'import), **vista `monsters`** che unisce SRD e
   Open5e: bestiario, scontri e combattimento leggono la vista. **Una colonna nuova nelle tabelle
   dei mostri va aggiunta anche alla vista** (`src/db/schema/monsters.ts`).
+- **App (SPEC-0017, ADR-0014)**: `scripts/app.mjs`, porta 3210, PID e log in `data/`. Riconosce il
+  suo server da `/api/salute`. Ricompila se `src/` è più nuovo di `.next/BUILD_ID`. Per le prove:
+  `--no-open` (non apre finestre) e `app:install -- --dest <cartella>`.
 - **Atmosfera (SPEC-0016)**: il provider sta nel layout `(dm)` e sopravvive ai cambi di pagina
   (non a un ricaricamento). Il motore (`features/ambience/engine`) si carica al primo clic. In
   sviluppo è su `window.__jumpmasterAmbience`: per misurare **senza suonare** si collega
@@ -164,6 +170,8 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - **Un test verde non prova nulla finché non l'hai visto fallire.** Il giro completo dell'archivio
   passava anche togliendo una colonna dall'import. Rompere il codice di proposito (mutazione) e
   guardare il test diventare rosso.
+- **Le icone con `ImageResponse`**: niente componenti React dentro `<svg>` (non vengono espansi),
+  niente emoji (si scaricherebbero dalla rete).
 - **Mai far partire audio sul PC dell'utente senza avvisare**: misurare in silenzio (vedi sopra).
 - **I dati di terzi vanno guardati tutti, non un campione.** Open5e: tipo di danno sempre vuoto,
   94 azioni leggendarie duplicate. Visti solo convertendo tutte le 1.908 creature e aprendo uno
@@ -186,4 +194,4 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 | M3 | Vista Giocatori (SSE, Discord) | ✅ funzionante, manca la prova di riconnessione |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ✅ completa |
 | M5 | Mappe (battlemap, fog of war, mondo) | ✅ completa |
-| M6 | Integrazioni (archivio, Open5e, audio, desktop) | 🔄 manca l'app desktop |
+| M6 | Integrazioni (archivio, Open5e, audio, desktop) | ✅ completa |

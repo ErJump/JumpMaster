@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { PageHeader, Panel, SrdAttribution, Badge } from '@/ui/components/primitives';
 import { ButtonLink } from '@/ui/components/Button';
+import { InstallHint } from '@/ui/components/InstallHint';
 import { featuresByGroup } from '@/features/registry';
 import { getActiveCampaign } from '@/features/campaigns/queries';
 import { CAMPAIGN_STATUS_LABELS } from '@/features/campaigns/schema';
@@ -76,6 +77,8 @@ export default function HomePage() {
           </div>
         </section>
       ))}
+
+      <InstallHint />
 
       <SrdAttribution className="mt-12 border-t border-[var(--jm-border)] pt-6" />
     </div>

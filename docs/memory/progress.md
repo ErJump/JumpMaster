@@ -51,6 +51,12 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M6 — App desktop (SPEC-0017, chiusa)
+
+- PWA installabile (manifest, icone generate dall'app). `npm run app` avvia tutto su 3210 e apre la
+  finestra; `npm run app:install` crea `JumpMaster.app` per il Dock (provato in una cartella di
+  prova, non installato). Tauri rimandato: vedi ADR-0014.
+
 ### M6 — Atmosfera (SPEC-0016, chiusa)
 
 - Scene di sottofondo con strati: sette suoni **sintetizzati** in tempo reale (Web Audio, nessun
