@@ -5,21 +5,28 @@
 import 'server-only';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/db/client';
-import { deleteImage, readImage, saveImageBytes } from '@/db/files';
+import { deleteAudio, deleteImage, readUpload, saveAudioBytes, saveImageBytes } from '@/db/files';
 import { archiveFileName } from '@/core/archive';
-import { exportCampaign, importCampaign, type ImageStore, type ImportResult } from './archive';
+import { exportCampaign, importCampaign, type FileStore, type ImportResult } from './archive';
 import { archiveSchema, describeArchiveError } from './schema';
 
 /** Un archivio con qualche mappa pesa decine di MB; oltre questo è quasi certamente un errore. */
 export const MAX_ARCHIVE_BYTES = 200 * 1024 * 1024;
 
-const uploads: ImageStore = {
-  read: async (name) => (await readImage(name))?.bytes ?? null,
-  save: async (bytes) => {
+const uploads: FileStore = {
+  read: async (name) => (await readUpload(name))?.bytes ?? null,
+  saveImage: async (bytes) => {
     const saved = await saveImageBytes(bytes);
     return saved.ok ? saved.file : null;
   },
-  remove: deleteImage,
+  saveAudio: async (bytes) => {
+    const saved = await saveAudioBytes(bytes);
+    return saved.ok ? saved.file : null;
+  },
+  remove: async (name) => {
+    await deleteImage(name);
+    await deleteAudio(name);
+  },
 };
 
 export async function exportArchive(campaignId: number): Promise<{ fileName: string; body: string } | null> {

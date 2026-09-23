@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { archiveFileName, importedName, remapCharacterId } from './index';
+import { archiveFileName, importedName, remapCharacterId, remapTrackLayers } from './index';
 
 describe('archiveFileName', () => {
   const day = new Date('2026-09-23T21:30:00Z');
@@ -49,5 +49,24 @@ describe('remapCharacterId', () => {
   it('lascia intatti gli eventi senza personaggio', () => {
     const event = { type: 'damage', id: 'm-7-1', amount: 5 };
     expect(remapCharacterId(event, ids)).toBe(event);
+  });
+});
+
+describe('remapTrackLayers', () => {
+  const ids = new Map([[4, 12]]);
+  it('riscrive le tracce, lascia i suoni generati, toglie le tracce assenti', () => {
+    expect(
+      remapTrackLayers(
+        [
+          { id: 'a', kind: 'synth', sound: 'rain', volume: 0.5 },
+          { id: 'b', kind: 'track', trackId: 4, volume: 0.7 },
+          { id: 'c', kind: 'track', trackId: 9, volume: 0.7 },
+        ],
+        ids,
+      ),
+    ).toStrictEqual([
+      { id: 'a', kind: 'synth', sound: 'rain', volume: 0.5 },
+      { id: 'b', kind: 'track', trackId: 12, volume: 0.7 },
+    ]);
   });
 });

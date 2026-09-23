@@ -4,8 +4,8 @@ import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { db } from '@/db/client';
-import { campaigns, appSettings, handouts, maps } from '@/db/schema';
-import { deleteImage } from '@/db/files';
+import { campaigns, appSettings, handouts, maps, ambienceTracks } from '@/db/schema';
+import { deleteAudio, deleteImage } from '@/db/files';
 import { parseCampaignForm } from './schema';
 import { ACTIVE_CAMPAIGN_KEY } from './queries';
 
@@ -67,15 +67,16 @@ export async function updateCampaign(id: number, _previous: FormState, formData:
 }
 
 export async function deleteCampaign(id: number): Promise<void> {
-  // Le righe se ne vanno a cascata; i file delle immagini no, e resterebbero orfani in
-  // `data/uploads/`. Si leggono prima di cancellare, si rimuovono dopo.
+  // Le righe se ne vanno a cascata; i file (immagini, tracce audio) no, e resterebbero orfani in
+  // `data/uploads/`. Si leggono prima di cancellare, si rimuovono dopo (I8).
   const images = [
     ...db.select({ file: handouts.imageFile }).from(handouts).where(eq(handouts.campaignId, id)).all(),
     ...db.select({ file: maps.imageFile }).from(maps).where(eq(maps.campaignId, id)).all(),
   ].map((row) => row.file);
+  const tracks = db.select({ file: ambienceTracks.file }).from(ambienceTracks).where(eq(ambienceTracks.campaignId, id)).all();
 
   db.delete(campaigns).where(eq(campaigns.id, id)).run();
-  await Promise.all(images.map((file) => deleteImage(file)));
+  await Promise.all([...images.map((file) => deleteImage(file)), ...tracks.map((track) => deleteAudio(track.file))]);
 
   // Se era la campagna attiva, il puntatore resterebbe appeso nel vuoto.
   const active = db.select().from(appSettings).where(eq(appSettings.key, ACTIVE_CAMPAIGN_KEY)).get();

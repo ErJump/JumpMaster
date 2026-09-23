@@ -11,6 +11,7 @@ import { encountersFeature } from './encounters/feature.config';
 import { combatFeature } from './combat/feature.config';
 import { playerFeature } from './player/feature.config';
 import { mapsFeature } from './maps/feature.config';
+import { ambienceFeature } from './ambience/feature.config';
 import { notesFeature } from './notes/feature.config';
 import { sessionsFeature } from './sessions/feature.config';
 import { generatorsFeature } from './generators/feature.config';
@@ -33,6 +34,7 @@ export const FEATURES: readonly FeatureConfig[] = [
   encountersFeature,
   combatFeature,
   mapsFeature,
+  ambienceFeature,
   playerFeature,
   bestiaryFeature,
   spellsFeature,

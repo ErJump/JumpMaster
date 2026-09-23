@@ -10,16 +10,18 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
-import { asc, eq, getTableColumns } from 'drizzle-orm';
+import { asc, eq, getTableColumns, getTableName, is } from 'drizzle-orm';
+import { SQLiteTable } from 'drizzle-orm/sqlite-core';
 import type Database from 'better-sqlite3';
 import { openDatabase } from '@/db/open';
 import * as schema from '@/db/schema';
 import { reduceCombat, type CombatEvent } from '@/core/events';
 import { detectImageType } from '@/lib/image-type';
-import { exportCampaign, importCampaign, type ArchiveDb, type ImageStore } from './archive';
+import { detectAudioType } from '@/lib/audio-type';
+import { exportCampaign, importCampaign, type ArchiveDb, type FileStore } from './archive';
 import { archiveSchema, describeArchiveError, type CampaignArchiveJson } from './schema';
 
-const { campaigns, characters, notes, sessions, encounters, encounterMonsters, combatEvents, handouts, maps } = schema;
+const { campaigns, characters, notes, sessions, encounters, encounterMonsters, combatEvents, handouts, maps, ambienceTracks, ambienceScenes } = schema;
 
 /** PNG 1×1 vero: il controllo sui byte deve riconoscerlo. */
 const PNG = Buffer.from(
@@ -27,27 +29,48 @@ const PNG = Buffer.from(
   'base64',
 );
 
+/** WAV vero di 4 campioni di silenzio: 44 byte d'intestazione più i dati. */
+function wav(): Buffer {
+  const data = Buffer.alloc(8);
+  const header = Buffer.alloc(44);
+  header.write('RIFF', 0);
+  header.writeUInt32LE(36 + data.length, 4);
+  header.write('WAVEfmt ', 8);
+  header.writeUInt32LE(16, 16);
+  header.writeUInt16LE(1, 20); // PCM
+  header.writeUInt16LE(1, 22); // mono
+  header.writeUInt32LE(8000, 24);
+  header.writeUInt32LE(16000, 28);
+  header.writeUInt16LE(2, 32);
+  header.writeUInt16LE(16, 34);
+  header.write('data', 36);
+  header.writeUInt32LE(data.length, 40);
+  return Buffer.concat([header, data]);
+}
+
 let dir: string;
 let uploads: string;
 let connection: Database.Database;
 let db: ArchiveDb;
-let images: ImageStore;
+let images: FileStore;
 let sourceId: number;
 
-function fileStore(folder: string): ImageStore {
+function fileStore(folder: string): FileStore {
+  const save = (detect: (bytes: Uint8Array) => { ext: string } | null) => async (bytes: Uint8Array) => {
+    const type = detect(bytes);
+    if (!type) return null;
+    const name = `${randomUUID()}.${type.ext}`;
+    await mkdir(folder, { recursive: true });
+    await writeFile(join(folder, name), bytes);
+    return name;
+  };
   return {
-    async read(name) {
+    async read(name: string) {
       return readFile(join(folder, name)).catch(() => null);
     },
-    async save(bytes) {
-      const type = detectImageType(bytes);
-      if (!type) return null;
-      const name = `${randomUUID()}.${type.ext}`;
-      await mkdir(folder, { recursive: true });
-      await writeFile(join(folder, name), bytes);
-      return name;
-    },
-    async remove(name) {
+    saveImage: save(detectImageType),
+    saveAudio: save(detectAudioType),
+    async remove(name: string) {
       await unlink(join(folder, name)).catch(() => undefined);
     },
   };
@@ -178,8 +201,8 @@ async function seed(): Promise<number> {
     )
     .run();
 
-  const handoutImage = await images.save(PNG);
-  const mapImage = await images.save(PNG);
+  const handoutImage = await images.saveImage(PNG);
+  const mapImage = await images.saveImage(PNG);
   db.insert(handouts).values({ campaignId, title: 'Lettera di Kolyan', body: 'Aiutateci.', imageFile: handoutImage }).run();
   db.insert(handouts).values({ campaignId, title: 'Solo testo', imageFile: null }).run();
   db.insert(maps)
@@ -214,6 +237,26 @@ async function seed(): Promise<number> {
     })
     .run();
 
+  // Una traccia di un'altra campagna prima: gli identificativi delle tracce non partono da 1.
+  db.insert(ambienceTracks).values({ campaignId: other.id, name: 'Estranea', file: (await images.saveAudio(wav()))!, mime: 'audio/wav', sizeBytes: 52 }).run();
+  const lute = db
+    .insert(ambienceTracks)
+    .values({ campaignId, name: 'Liuto della taverna', file: (await images.saveAudio(wav()))!, mime: 'audio/wav', sizeBytes: 52 })
+    .returning()
+    .get();
+  db.insert(ambienceScenes)
+    .values({
+      campaignId,
+      name: 'Taverna del Sangue di Vin',
+      icon: '🍺',
+      position: 3,
+      layers: [
+        { id: 'fire', kind: 'synth', sound: 'fire', volume: 0.6 },
+        { id: 'lute', kind: 'track', trackId: lute.id, volume: 0.4 },
+      ],
+    })
+    .run();
+
   return campaignId;
 }
 
@@ -223,6 +266,7 @@ async function seed(): Promise<number> {
  */
 function comparable(archive: CampaignArchiveJson) {
   const refs = new Map(archive.characters.map((c, index) => [c.ref, index]));
+  const trackRefs = new Map((archive.ambienceTracks ?? []).map((t, index) => [t.ref, index]));
   // Un'immagine si confronta per contenuto: il nome sul disco cambia per forza.
   const content = (name: string | null) => (name === null ? null : archive.files[name]);
   return {
@@ -239,6 +283,11 @@ function comparable(archive: CampaignArchiveJson) {
     })),
     handouts: archive.handouts.map((h) => ({ ...h, imageFile: content(h.imageFile) })),
     maps: archive.maps.map((m) => ({ ...m, imageFile: content(m.imageFile) })),
+    ambienceTracks: (archive.ambienceTracks ?? []).map((t) => ({ ...t, ref: trackRefs.get(t.ref), file: content(t.file) })),
+    ambienceScenes: (archive.ambienceScenes ?? []).map((scene) => ({
+      ...scene,
+      layers: scene.layers.map((layer) => (layer.kind === 'track' ? { ...layer, trackId: trackRefs.get(layer.trackId) } : layer)),
+    })),
     // Il contenuto delle immagini, non quante copie ne esistono.
     files: [...new Set(Object.values(archive.files))].sort(),
   };
@@ -265,26 +314,42 @@ describe('archivio di una campagna — giro completo', () => {
     const parsed = throughFile(archive!);
     expect(parsed.characters.map((c) => c.name)).toStrictEqual(['Elara Ventoluna', 'Ismark']);
     expect(parsed.encounters[0]?.events).toHaveLength(9);
-    // Un'immagine usata da due mappe viaggia una volta sola.
-    expect(Object.keys(parsed.files)).toHaveLength(2);
+    // Un'immagine usata da due mappe viaggia una volta sola: 2 immagini e 1 traccia.
+    expect(Object.keys(parsed.files).map((name) => name.split('.').pop()).sort()).toStrictEqual(['png', 'png', 'wav']);
   });
 
-  it('ogni colonna di ogni tabella viaggia nel file', async () => {
-    // Se una migrazione aggiunge una colonna e l'archivio non la conosce, questo test lo dice.
+  it('ogni tabella di una campagna viaggia nel file, con tutte le colonne', async () => {
+    // Una tabella o una colonna nuova che l'archivio ignorasse si perderebbe a ogni backup, senza
+    // che nessuno se ne accorga. Qui ogni tabella con `campaignId` deve comparire nel file con una
+    // riga vera, oppure essere esclusa di proposito.
     const archive = (await exportCampaign(db, sourceId, images))!;
-    const columns = (table: Parameters<typeof getTableColumns>[0], without: string[]) =>
-      Object.keys(getTableColumns(table)).filter((c) => !without.includes(c)).sort();
-    const keys = (row: object | undefined, without: string[] = []) => Object.keys(row ?? {}).filter((k) => !without.includes(k)).sort();
+    const EXCLUDED = new Set(['live_state']); // lo stato della Vista Giocatori è del momento (SPEC-0014 AC8)
+    const rowIn: Record<string, { row: object | undefined; extra: string[]; ids: string[] }> = {
+      characters: { row: archive.characters[0], extra: ['ref'], ids: ['id', 'campaignId'] },
+      notes: { row: archive.notes[0], extra: [], ids: ['id', 'campaignId'] },
+      sessions: { row: archive.sessions[0], extra: [], ids: ['id', 'campaignId'] },
+      encounters: { row: archive.encounters[0], extra: ['monsters', 'events'], ids: ['id', 'campaignId'] },
+      handouts: { row: archive.handouts[0], extra: [], ids: ['id', 'campaignId'] },
+      maps: { row: archive.maps[0], extra: [], ids: ['id', 'campaignId'] },
+      ambience_tracks: { row: archive.ambienceTracks?.[0], extra: ['ref'], ids: ['id', 'campaignId'] },
+      ambience_scenes: { row: archive.ambienceScenes?.[0], extra: [], ids: ['id', 'campaignId'] },
+    };
+    const columns = (table: SQLiteTable, without: string[]) => Object.keys(getTableColumns(table)).filter((c) => !without.includes(c)).sort();
+    const keys = (row: object | undefined, without: string[]) => Object.keys(row ?? {}).filter((k) => !without.includes(k)).sort();
 
-    expect(keys(archive.campaign)).toStrictEqual(columns(campaigns, ['id']));
-    expect(keys(archive.characters[0], ['ref'])).toStrictEqual(columns(characters, ['id', 'campaignId']));
-    expect(keys(archive.notes[0])).toStrictEqual(columns(notes, ['id', 'campaignId']));
-    expect(keys(archive.sessions[0])).toStrictEqual(columns(sessions, ['id', 'campaignId']));
-    expect(keys(archive.encounters[0], ['monsters', 'events'])).toStrictEqual(columns(encounters, ['id', 'campaignId']));
-    expect(keys(archive.encounters[0]?.monsters[0])).toStrictEqual(columns(encounterMonsters, ['id', 'encounterId']));
-    expect(keys(archive.encounters[0]?.events[0])).toStrictEqual(columns(combatEvents, ['id', 'encounterId']));
-    expect(keys(archive.handouts[0])).toStrictEqual(columns(handouts, ['id', 'campaignId']));
-    expect(keys(archive.maps[0])).toStrictEqual(columns(maps, ['id', 'campaignId']));
+    const campaignTables = (Object.values(schema) as unknown[])
+      .filter((value): value is SQLiteTable => is(value, SQLiteTable))
+      .filter((table) => 'campaignId' in getTableColumns(table) && !EXCLUDED.has(getTableName(table)));
+    expect(campaignTables.length).toBeGreaterThanOrEqual(8);
+    for (const table of campaignTables) {
+      const entry = rowIn[getTableName(table)];
+      expect(entry, `la tabella ${getTableName(table)} non è nell'archivio`).toBeDefined();
+      expect(keys(entry!.row, entry!.extra), getTableName(table)).toStrictEqual(columns(table, entry!.ids));
+    }
+
+    expect(keys(archive.campaign, [])).toStrictEqual(columns(campaigns, ['id']));
+    expect(keys(archive.encounters[0]?.monsters[0], [])).toStrictEqual(columns(encounterMonsters, ['id', 'encounterId']));
+    expect(keys(archive.encounters[0]?.events[0], [])).toStrictEqual(columns(combatEvents, ['id', 'encounterId']));
   });
 
   it('esportare → importare → esportare dà lo stesso contenuto (AC4)', async () => {
@@ -346,6 +411,12 @@ describe('archivio di una campagna — giro completo', () => {
     const files = [...imported_, ...handout].map((row) => row.imageFile).filter((f) => f !== null);
     expect(new Set(files).size).toBe(files.length);
 
+    // La scena suona la traccia della copia, non quella dell'originale.
+    const track = db.select().from(ambienceTracks).where(eq(ambienceTracks.campaignId, result.id)).get()!;
+    const scene = db.select().from(ambienceScenes).where(eq(ambienceScenes.campaignId, result.id)).get()!;
+    expect((scene.layers as Array<{ kind: string; trackId?: number }>).find((l) => l.kind === 'track')?.trackId).toBe(track.id);
+    expect(await images.read(track.file)).toStrictEqual(wav());
+
     // Le immagini sono file nuovi e leggibili, non i nomi dell'originale.
     const original_ = db.select().from(maps).where(eq(maps.campaignId, sourceId)).all()[0]!;
     expect(map.imageFile).not.toBe(original_.imageFile);
@@ -360,16 +431,27 @@ describe('archivio — tutto o niente (AC6, AC7)', () => {
     uploads: readdirSync(uploads).length,
   });
 
-  it('un’immagine che non è un’immagine: nulla viene importato', async () => {
+  it('un’immagine o una traccia che non sono ciò che dicono: nulla viene importato', async () => {
     const archive = (await exportCampaign(db, sourceId, images))!;
-    const [first] = Object.keys(archive.files);
-    const tampered = { ...archive, files: { ...archive.files, [first!]: Buffer.from('<script>alert(1)</script>').toString('base64') } };
+    const fake = Buffer.from('<script>alert(1)</script>').toString('base64');
+    for (const ext of ['png', 'wav']) {
+      const name = Object.keys(archive.files).find((n) => n.endsWith(`.${ext}`))!;
+      const tampered = { ...archive, files: { ...archive.files, [name]: fake } };
 
-    const before = count();
-    const result = await importCampaign(db, throughFile(tampered), images);
-    expect(result.ok).toBe(false);
-    expect(!result.ok && result.error).toMatch(/immagine/);
-    expect(count()).toStrictEqual(before);
+      const before = count();
+      const result = await importCampaign(db, throughFile(tampered), images);
+      expect(result.ok).toBe(false);
+      expect(!result.ok && result.error).toMatch(ext === 'png' ? /l’immagine/ : /la traccia/);
+      expect(count()).toStrictEqual(before);
+    }
+  });
+
+  it('un file della versione 1, senza atmosfera, si importa ancora', async () => {
+    const current = (await exportCampaign(db, sourceId, images))!;
+    const v1 = Object.fromEntries(Object.entries(current).filter(([key]) => !key.startsWith('ambience')));
+    const result = await importCampaign(db, archiveSchema.parse(JSON.parse(JSON.stringify({ ...v1, version: 1 }))), images);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(db.select().from(ambienceScenes).where(eq(ambienceScenes.campaignId, result.id)).all()).toStrictEqual([]);
   });
 
   it('un errore del database a metà: né righe né immagini restano indietro', async () => {

@@ -29,6 +29,8 @@ la feature è progettata male.*
 - 📺 **Vista Giocatori** — una seconda finestra da condividere su Discord: i mostri a fasce
   («Ferito», «Malconcio»), mai i numeri; imboscate nascoste; handout con immagini
 - 🛡️ **Il gruppo** — CA, Percezione passiva e tiri salvezza di tutti, a colpo d'occhio
+- 🎵 **Atmosfera** — pioggia, vento, fuoco, grotte, tempesta: sottofondi generati dall'app, senza
+  file e senza rete, più la tua musica; si cambia scena con una dissolvenza
 - ⚖️ **Scontri** — scegli i mostri e scopri se rischiano di uccidere il gruppo
 - 🗺️ **Mappe** — battlemap con griglia, segnalini presi dal combattimento, righello e nebbia
   di guerra: ai giocatori arriva solo ciò che hai rivelato. Mappa del mondo con i luoghi
@@ -52,7 +54,7 @@ la feature è progettata male.*
 - 🎲 **Dadi** con notazione completa (`4d6kh3`, `2d20kh1`, `8d6/2`)
 
 ### In arrivo
-Audio d'ambiente, app desktop. Vedi la
+App desktop. Vedi la
 [roadmap](docs/memory/active-context.md).
 
 ## Requisiti

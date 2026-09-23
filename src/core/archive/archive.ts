@@ -11,7 +11,14 @@ export const ARCHIVE_FORMAT = 'jumpmaster.campaign';
  * Versione del formato. Si alza solo quando un file vecchio non si potrebbe più leggere così com'è;
  * un'app più vecchia rifiuta i file più nuovi invece di importarli a metà.
  */
-export const ARCHIVE_VERSION = 1;
+export const ARCHIVE_VERSION = 2;
+
+/**
+ * Storia del formato:
+ * 1 — campagna, personaggi, note, sessioni, scontri, handout, mappe (SPEC-0014).
+ * 2 — più tracce e scene d'atmosfera (SPEC-0016). Un file 1 si importa ancora: le nuove parti
+ *     mancano e restano vuote. Un'app ferma alla 1 rifiuta i file 2 invece di perderne un pezzo.
+ */
 
 /** `jumpmaster-la-maledizione-di-strahd-2026-09-23.json`: si capisce cos'è anche fra i download. */
 export function archiveFileName(campaignName: string, date: Date): string {
@@ -55,4 +62,16 @@ export function remapCharacterId<T extends object>(event: T, ids: ReadonlyMap<nu
   const { characterId, ...rest } = event;
   const mapped = ids.get(characterId);
   return (mapped === undefined ? rest : { ...rest, characterId: mapped }) as T;
+}
+
+/**
+ * Riscrive gli strati di una scena con gli identificativi nuovi delle tracce. Uno strato che cita
+ * una traccia assente dal file si toglie: meglio una scena con un suono in meno che uno strato muto.
+ */
+export function remapTrackLayers<L extends { kind: string; trackId?: number }>(layers: readonly L[], ids: ReadonlyMap<number, number>): L[] {
+  return layers.flatMap((layer) => {
+    if (layer.kind !== 'track' || layer.trackId === undefined) return [layer];
+    const mapped = ids.get(layer.trackId);
+    return mapped === undefined ? [] : [{ ...layer, trackId: mapped }];
+  });
 }

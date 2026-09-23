@@ -8,8 +8,9 @@
 import { z } from 'zod';
 import { ARCHIVE_FORMAT, ARCHIVE_VERSION } from '@/core/archive';
 import type { CombatEvent } from '@/core/events';
-import { fogSchema, pinsSchema, sessionPrepSchema, tokensSchema } from '@/db/schema/json';
+import { fogSchema, layersSchema, pinsSchema, sessionPrepSchema, tokensSchema } from '@/db/schema/json';
 import { UPLOAD_NAME } from '@/lib/image-type';
+import { AUDIO_NAME } from '@/lib/audio-type';
 
 const SHORT = 200;
 const LONG = 200_000;
@@ -194,10 +195,28 @@ const mapSchema = z.strictObject({
   ...stamps,
 });
 
+const trackSchema = z.strictObject({
+  /** Identificativo d'origine: serve solo a ricollegare gli strati delle scene. */
+  ref: z.number().int().positive(),
+  name: z.string().trim().min(1).max(SHORT),
+  file: z.string().regex(AUDIO_NAME),
+  mime: z.string().max(40),
+  sizeBytes: int(1, 50 * 1024 * 1024),
+  createdAt: date,
+});
+
+const sceneSchema = z.strictObject({
+  name: z.string().trim().min(1).max(SHORT),
+  icon: z.string().min(1).max(16),
+  position: int(0, 100_000),
+  layers: layersSchema,
+  ...stamps,
+});
+
 /* ── Il file ──────────────────────────────────────────────────────── */
 
-/** 10 MB di immagine diventano circa 13,4 MB in base64. */
-const MAX_BASE64 = 14 * 1024 * 1024;
+/** Una traccia da 40 MB diventa circa 53,4 MB in base64; un'immagine da 10 MB circa 13,4. */
+const MAX_BASE64 = 54 * 1024 * 1024;
 
 export const archiveSchema = z
   .object({
@@ -224,7 +243,13 @@ export const archiveSchema = z
     encounters: z.array(encounterSchema).max(10_000),
     handouts: z.array(handoutSchema).max(1000),
     maps: z.array(mapSchema).max(1000),
-    files: z.record(z.string().regex(UPLOAD_NAME), z.string().max(MAX_BASE64)),
+    // Assenti nei file della versione 1: restano vuote.
+    ambienceTracks: z.array(trackSchema).max(500).default([]),
+    ambienceScenes: z.array(sceneSchema).max(500).default([]),
+    files: z.record(
+      z.string().refine((name) => UPLOAD_NAME.test(name) || AUDIO_NAME.test(name)),
+      z.string().max(MAX_BASE64),
+    ),
   })
   .superRefine((archive, ctx) => {
     // Ogni immagine citata deve viaggiare nel file: meglio rifiutare subito che importare una
@@ -233,11 +258,14 @@ export const archiveSchema = z
     for (const name of referenced) {
       if (!(name in archive.files)) ctx.addIssue({ code: 'custom', path: ['files', name], message: 'immagine mancante' });
     }
-    const refs = new Set<number>();
-    for (const character of archive.characters) {
-      if (refs.has(character.ref)) ctx.addIssue({ code: 'custom', path: ['characters'], message: 'personaggi duplicati' });
-      refs.add(character.ref);
+    for (const track of archive.ambienceTracks) {
+      if (!(track.file in archive.files)) ctx.addIssue({ code: 'custom', path: ['files', track.file], message: 'traccia audio mancante' });
     }
+    const unique = (refs: number[], path: string, message: string) => {
+      if (new Set(refs).size !== refs.length) ctx.addIssue({ code: 'custom', path: [path], message });
+    };
+    unique(archive.characters.map((c) => c.ref), 'characters', 'personaggi duplicati');
+    unique(archive.ambienceTracks.map((t) => t.ref), 'ambienceTracks', 'tracce duplicate');
   });
 
 export type CampaignArchive = z.output<typeof archiveSchema>;

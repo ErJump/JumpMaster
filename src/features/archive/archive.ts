@@ -3,23 +3,25 @@
  *
  * Database e file arrivano come parametri, senza `server-only`: così il test del giro completo
  * gira su un database SQLite vero, con le migrazioni reali, e su una cartella temporanea.
- * L'app li collega in `archive-server.ts`.
+ * L'app li collega in `server.ts`.
  */
 import { asc, eq, inArray } from 'drizzle-orm';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import * as schema from '@/db/schema';
-import { ARCHIVE_FORMAT, ARCHIVE_VERSION, importedName, remapCharacterId } from '@/core/archive';
+import { ARCHIVE_FORMAT, ARCHIVE_VERSION, importedName, remapCharacterId, remapTrackLayers } from '@/core/archive';
 import type { CampaignArchive, CampaignArchiveJson } from './schema';
 
-const { campaigns, characters, notes, sessions, encounters, encounterMonsters, combatEvents, handouts, maps } = schema;
+const { campaigns, characters, notes, sessions, encounters, encounterMonsters, combatEvents, handouts, maps, ambienceTracks, ambienceScenes } = schema;
 
 export type ArchiveDb = BetterSQLite3Database<typeof schema>;
 
-/** Dove stanno le immagini. In produzione è `data/uploads/`, nei test una cartella temporanea. */
-export interface ImageStore {
+/** Dove stanno i file caricati. In produzione è `data/uploads/`, nei test una cartella temporanea. */
+export interface FileStore {
   read(name: string): Promise<Uint8Array | null>;
   /** Salva i byte con un nome nuovo; `null` se non sono un'immagine accettata. */
-  save(bytes: Uint8Array): Promise<string | null>;
+  saveImage(bytes: Uint8Array): Promise<string | null>;
+  /** Come `saveImage`, per le tracce audio. */
+  saveAudio(bytes: Uint8Array): Promise<string | null>;
   remove(name: string): Promise<void>;
 }
 
@@ -39,7 +41,7 @@ function plain<T extends Record<string, unknown>, K extends keyof T>(row: T, dro
 
 const ROW_IDS = ['id', 'campaignId'] as const;
 
-export async function exportCampaign(db: ArchiveDb, campaignId: number, images: ImageStore): Promise<CampaignArchiveJson | null> {
+export async function exportCampaign(db: ArchiveDb, campaignId: number, files: FileStore): Promise<CampaignArchiveJson | null> {
   const campaign = db.select().from(campaigns).where(eq(campaigns.id, campaignId)).get();
   if (!campaign) return null;
 
@@ -54,21 +56,28 @@ export async function exportCampaign(db: ArchiveDb, campaignId: number, images: 
   const monsterRows = encounterIds.length
     ? db.select().from(encounterMonsters).where(inArray(encounterMonsters.encounterId, encounterIds)).orderBy(asc(encounterMonsters.id)).all()
     : [];
+  const trackRows = db.select().from(ambienceTracks).where(eq(ambienceTracks.campaignId, campaignId)).orderBy(asc(ambienceTracks.id)).all();
+  const sceneRows = db.select().from(ambienceScenes).where(eq(ambienceScenes.campaignId, campaignId)).orderBy(asc(ambienceScenes.id)).all();
   const eventRows = encounterIds.length
     ? db.select().from(combatEvents).where(inArray(combatEvents.encounterId, encounterIds)).orderBy(asc(combatEvents.seq)).all()
     : [];
 
-  // Le immagini viaggiano dentro il file. Se una è sparita dal disco, la riga resta senza
-  // immagine: meglio un handout senza figura che nessun backup.
-  const files: Record<string, string> = {};
-  const withImage = async <R extends { imageFile: string | null }>(row: R): Promise<R> => {
-    if (!row.imageFile) return row;
-    if (row.imageFile in files) return row;
-    const bytes = await images.read(row.imageFile);
-    if (!bytes) return { ...row, imageFile: null };
-    files[row.imageFile] = Buffer.from(bytes).toString('base64');
-    return row;
+  // Immagini e tracce viaggiano dentro il file. Se un file è sparito dal disco, la riga resta senza
+  // immagine (o la traccia non viaggia): meglio un handout senza figura che nessun backup.
+  const embedded: Record<string, string> = {};
+  const embed = async (name: string): Promise<boolean> => {
+    if (name in embedded) return true;
+    const bytes = await files.read(name);
+    if (!bytes) return false;
+    embedded[name] = Buffer.from(bytes).toString('base64');
+    return true;
   };
+  const withImage = async <R extends { imageFile: string | null }>(row: R): Promise<R> =>
+    !row.imageFile || (await embed(row.imageFile)) ? row : { ...row, imageFile: null };
+
+  const tracks = [];
+  for (const track of trackRows) if (await embed(track.file)) tracks.push(track);
+  const exported = new Map(tracks.map((t) => [t.id, t.id]));
 
   return {
     format: ARCHIVE_FORMAT,
@@ -87,7 +96,12 @@ export async function exportCampaign(db: ArchiveDb, campaignId: number, images: 
     })),
     handouts: await Promise.all(handoutRows.map(async (row) => plain(await withImage(row), ROW_IDS))),
     maps: (await Promise.all(mapRows.map(async (row) => plain(await withImage(row), ROW_IDS)))) as CampaignArchiveJson['maps'],
-    files,
+    ambienceTracks: tracks.map(({ id, ...row }) => ({ ref: id, ...plain(row, ['campaignId']) })),
+    ambienceScenes: sceneRows.map((row) => ({
+      ...plain(row, ROW_IDS),
+      layers: remapTrackLayers(row.layers as Array<{ kind: string; trackId?: number }>, exported),
+    })) as CampaignArchiveJson['ambienceScenes'],
+    files: embedded,
   };
 }
 
@@ -109,24 +123,29 @@ function chunks<T>(rows: readonly T[]): T[][] {
  * prime, le righe in una sola transazione; se qualcosa va storto le immagini appena scritte si
  * cancellano e il database resta com'era.
  */
-export async function importCampaign(db: ArchiveDb, archive: CampaignArchive, images: ImageStore): Promise<ImportResult> {
+export async function importCampaign(db: ArchiveDb, archive: CampaignArchive, files: FileStore): Promise<ImportResult> {
   const written: string[] = [];
 
   try {
     // Ogni riga riceve la **sua** copia dell'immagine, anche se nel file due righe ne citano una
     // sola: nell'app un file appartiene a una riga, ed eliminare una mappa cancella il suo file.
-    const copy = async (name: string | null): Promise<string | null> => {
+    const copy = async (name: string | null, kind: 'image' | 'audio'): Promise<string | null> => {
       if (name === null) return null;
       const encoded = archive.files[name];
-      const saved = encoded === undefined ? null : await images.save(new Uint8Array(Buffer.from(encoded, 'base64')));
-      if (!saved) throw new ArchiveError(`Il file non è valido: l’immagine ${name} è danneggiata o non è un’immagine.`);
+      const bytes = encoded === undefined ? null : new Uint8Array(Buffer.from(encoded, 'base64'));
+      const saved = bytes === null ? null : kind === 'image' ? await files.saveImage(bytes) : await files.saveAudio(bytes);
+      if (!saved) {
+        throw new ArchiveError(`Il file non è valido: ${kind === 'image' ? 'l’immagine' : 'la traccia'} ${name} è danneggiata o non è del tipo giusto.`);
+      }
       written.push(saved);
       return saved;
     };
     const handoutImages: Array<string | null> = [];
-    for (const handout of archive.handouts) handoutImages.push(await copy(handout.imageFile));
+    for (const handout of archive.handouts) handoutImages.push(await copy(handout.imageFile, 'image'));
     const mapImages: Array<string | null> = [];
-    for (const map of archive.maps) mapImages.push(await copy(map.imageFile));
+    for (const map of archive.maps) mapImages.push(await copy(map.imageFile, 'image'));
+    const trackFiles: string[] = [];
+    for (const track of archive.ambienceTracks) trackFiles.push((await copy(track.file, 'audio'))!);
 
     const result = db.transaction((tx) => {
       const existing = tx.select({ name: campaigns.name }).from(campaigns).all().map((c) => c.name);
@@ -158,12 +177,21 @@ export async function importCampaign(db: ArchiveDb, archive: CampaignArchive, im
       const mapRows = archive.maps.map((m, i) => ({ ...m, campaignId, imageFile: mapImages[i] ?? null }));
       for (const part of chunks(mapRows)) tx.insert(maps).values(part).run();
 
+      const trackIds = new Map<number, number>();
+      archive.ambienceTracks.forEach(({ ref, ...track }, i) => {
+        const row = tx.insert(ambienceTracks).values({ ...track, campaignId, file: trackFiles[i]! }).returning({ id: ambienceTracks.id }).get();
+        trackIds.set(ref, row.id);
+      });
+      for (const part of chunks(archive.ambienceScenes)) {
+        tx.insert(ambienceScenes).values(part.map((scene) => ({ ...scene, campaignId, layers: remapTrackLayers(scene.layers, trackIds) }))).run();
+      }
+
       return { id: campaignId, name };
     });
 
     return { ok: true, ...result };
   } catch (error) {
-    await Promise.all(written.map((name) => images.remove(name)));
+    await Promise.all(written.map((name) => files.remove(name)));
     if (error instanceof ArchiveError) return { ok: false, error: error.message };
     return { ok: false, error: `Importazione non riuscita: ${error instanceof Error ? error.message : String(error)}` };
   }

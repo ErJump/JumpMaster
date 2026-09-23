@@ -51,6 +51,15 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M6 — Atmosfera (SPEC-0016, chiusa)
+
+- Scene di sottofondo con strati: sette suoni **sintetizzati** in tempo reale (Web Audio, nessun
+  file) e tracce caricate dal DM. Dissolvenza a potenza costante, volume per strato regolabile
+  mentre suona, barra in alto su ogni pagina, il suono continua cambiando pagina.
+- Provato misurando l'uscita (analizzatore), non ascoltando: **l'ascolto è da fare**.
+- Archivio alla versione 2: tracce e scene viaggiano con la campagna.
+- La rotta `/api/uploads` serve anche l'audio e rispetta le richieste `Range`.
+
 ### M6 — Mostri da fonti aperte (SPEC-0015, chiusa)
 
 - Pagina «Fonti aperte»: catalogo Open5e (regolamento 2014), download con avanzamento,

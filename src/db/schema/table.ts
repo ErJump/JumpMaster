@@ -265,3 +265,43 @@ export const maps = sqliteTable(
 );
 
 export type MapRow = typeof maps.$inferSelect;
+
+/* ── Atmosfera (M6) ───────────────────────────────────────────────── */
+
+/** Tracce audio caricate dal DM (SPEC-0016). Il file appartiene alla traccia (I8). */
+export const ambienceTracks = sqliteTable(
+  'ambience_tracks',
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    campaignId: campaignId(),
+    name: text().notNull(),
+    /** `<uuid>.<ext>` in `data/uploads/`. */
+    file: text().notNull(),
+    mime: text().notNull(),
+    sizeBytes: integer().notNull(),
+    createdAt: now(),
+  },
+  (t) => [index('idx_ambience_tracks_campaign').on(t.campaignId)],
+);
+
+/**
+ * Scene d'atmosfera: un mix di strati, suoni generati o tracce (SPEC-0016). Gli strati sono JSON:
+ * cambiano mentre la scena suona e si leggono sempre tutti insieme.
+ */
+export const ambienceScenes = sqliteTable(
+  'ambience_scenes',
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    campaignId: campaignId(),
+    name: text().notNull(),
+    icon: text().notNull().default('🎵'),
+    position: integer().notNull().default(0),
+    layers: text({ mode: 'json' }).notNull().default(sql`'[]'`),
+    createdAt: now(),
+    updatedAt: now(),
+  },
+  (t) => [index('idx_ambience_scenes_campaign').on(t.campaignId, t.position)],
+);
+
+export type AmbienceTrack = typeof ambienceTracks.$inferSelect;
+export type AmbienceScene = typeof ambienceScenes.$inferSelect;

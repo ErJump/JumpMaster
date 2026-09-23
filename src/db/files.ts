@@ -1,5 +1,6 @@
 /**
- * File caricati dal DM — immagini di handout e mappe — salvati in locale in `data/uploads/`.
+ * File caricati dal DM — immagini di handout e mappe, tracce audio dell'atmosfera — salvati in
+ * locale in `data/uploads/`.
  *
  * Sta nel livello di archiviazione condiviso (`src/db/`: database e file in `data/`) perché lo
  * usano più slice: `player` per gli handout, `maps` per le mappe (invariante I2).
@@ -10,8 +11,11 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { detectImageType, imageSize, UPLOAD_NAME, MIME_BY_EXT, type ImageType } from '@/lib/image-type';
+import { AUDIO_MIME_BY_EXT, AUDIO_NAME, detectAudioType, type AudioExt } from '@/lib/audio-type';
 
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+/** Una traccia d'ambiente di qualche minuto in MP3 sta sotto i 10 MB; 40 lasciano spazio ai WAV corti. */
+export const MAX_AUDIO_BYTES = 40 * 1024 * 1024;
 
 const UPLOAD_DIR = process.env.JUMPMASTER_UPLOADS ?? resolve(/* turbopackIgnore: true */ process.cwd(), 'data/uploads');
 
@@ -63,9 +67,45 @@ export async function readImage(name: string): Promise<{ bytes: Buffer; mime: st
   }
 }
 
+export type SaveAudioResult = { ok: true; file: string; mime: string } | { ok: false; error: string };
+
+/** Salva una traccia audio (SPEC-0016): riconosciuta dai byte, nome deciso dall'app. */
+export async function saveAudioBytes(bytes: Uint8Array): Promise<SaveAudioResult> {
+  if (bytes.length === 0) return { ok: false, error: 'Il file è vuoto.' };
+  if (bytes.length > MAX_AUDIO_BYTES) return { ok: false, error: 'La traccia supera i 40 MB.' };
+  const type = detectAudioType(bytes);
+  if (!type) return { ok: false, error: 'Formato non supportato: usa MP3, OGG, WAV, M4A o FLAC.' };
+
+  const name = `${randomUUID()}.${type.ext}`;
+  await mkdir(UPLOAD_DIR, { recursive: true });
+  await writeFile(uploadPath(name), bytes);
+  return { ok: true, file: name, mime: type.mime };
+}
+
+export async function readAudio(name: string): Promise<{ bytes: Buffer; mime: string } | null> {
+  if (!AUDIO_NAME.test(name)) return null;
+  try {
+    const bytes = await readFile(uploadPath(name));
+    return { bytes, mime: AUDIO_MIME_BY_EXT[name.split('.').pop() as AudioExt] };
+  } catch {
+    return null;
+  }
+}
+
+/** Qualunque file caricato, immagine o audio: è quello che serve la rotta `/api/uploads`. */
+export async function readUpload(name: string): Promise<{ bytes: Buffer; mime: string } | null> {
+  return (await readImage(name)) ?? (await readAudio(name));
+}
+
 export async function deleteImage(name: string | null): Promise<void> {
   if (!name || !UPLOAD_NAME.test(name)) return;
   await unlink(uploadPath(name)).catch(() => undefined);
 }
 
+export async function deleteAudio(name: string | null): Promise<void> {
+  if (!name || !AUDIO_NAME.test(name)) return;
+  await unlink(uploadPath(name)).catch(() => undefined);
+}
+
 export const imageUrl = (name: string | null): string | null => (name ? `/api/uploads/${name}` : null);
+export const uploadUrl = (name: string): string => `/api/uploads/${name}`;

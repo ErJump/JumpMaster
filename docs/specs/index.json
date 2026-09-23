@@ -150,6 +150,16 @@
       "features": [
         "sources"
       ]
+    },
+    {
+      "id": "SPEC-0016",
+      "dir": "SPEC-0016-atmosfera",
+      "title": "Audio d'ambiente",
+      "milestone": "M6",
+      "status": "done",
+      "features": [
+        "ambience"
+      ]
     }
   ]
 }

@@ -9,6 +9,7 @@
  * Non è riesportato da `./index`: quello è l'insieme delle tabelle che Drizzle riceve.
  */
 import { z } from 'zod';
+import { SYNTH_SOUNDS } from '@/core/ambience';
 
 /* ── Mappe (SPEC-0012, SPEC-0013) ─────────────────────────────────── */
 
@@ -52,3 +53,15 @@ export const sessionPrepSchema = z.object({
   monsters: list,
   rewards: list,
 });
+
+/* ── Atmosfera (SPEC-0016) ────────────────────────────────────────── */
+
+const volume = z.number().min(0).max(1);
+const layerId = z.string().min(1).max(64);
+
+export const layerSchema = z.discriminatedUnion('kind', [
+  z.object({ id: layerId, kind: z.literal('synth'), sound: z.enum(SYNTH_SOUNDS), volume }),
+  z.object({ id: layerId, kind: z.literal('track'), trackId: z.number().int().positive(), volume }),
+]);
+
+export const layersSchema = z.array(layerSchema).max(12, 'Al massimo 12 strati per scena.');

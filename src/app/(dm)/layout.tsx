@@ -3,6 +3,8 @@ import { Navigation } from '@/ui/components/Navigation';
 import { ThemeToggle } from '@/ui/components/ThemeToggle';
 import { OpenPlayerWindow } from '@/features/player/components/OpenPlayerWindow';
 import { getActiveCampaign } from '@/features/campaigns/queries';
+import { AmbienceProvider } from '@/features/ambience/components/AmbienceProvider';
+import { AmbienceBar } from '@/features/ambience/components/AmbienceBar';
 
 /**
  * Ogni pagina del pannello DM legge dal database a ogni richiesta.
@@ -34,35 +36,39 @@ export default function DmLayout({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-border bg-bg/80 sticky top-0 z-10 flex items-center justify-between gap-4 border-b px-6 py-3 backdrop-blur">
-          <Link href="/" className="text-gold text-xl font-semibold lg:hidden">
-            ⚔ JumpMaster
-          </Link>
+      {/* L'atmosfera avvolge barra e pagine: continua a suonare quando si cambia pagina (SPEC-0016). */}
+      <AmbienceProvider>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="border-border bg-bg/80 sticky top-0 z-10 flex items-center justify-between gap-4 border-b px-6 py-3 backdrop-blur">
+            <Link href="/" className="text-gold text-xl font-semibold lg:hidden">
+              ⚔ JumpMaster
+            </Link>
 
-          <div className="hidden min-w-0 lg:block">
-            {activeCampaign ? (
-              <Link href={`/campagne/${activeCampaign.id}`} className="group flex items-baseline gap-2">
-                <span className="small-caps text-ink-faint text-sm">Campagna attiva</span>
-                <span className="text-gold group-hover:text-gold truncate text-lg font-semibold">
-                  {activeCampaign.name}
-                </span>
-              </Link>
-            ) : (
-              <Link href="/campagne" className="text-ink-faint hover:text-gold text-base">
-                Nessuna campagna attiva — scegline una
-              </Link>
-            )}
-          </div>
+            <div className="hidden min-w-0 lg:block">
+              {activeCampaign ? (
+                <Link href={`/campagne/${activeCampaign.id}`} className="group flex items-baseline gap-2">
+                  <span className="small-caps text-ink-faint text-sm">Campagna attiva</span>
+                  <span className="text-gold group-hover:text-gold truncate text-lg font-semibold">
+                    {activeCampaign.name}
+                  </span>
+                </Link>
+              ) : (
+                <Link href="/campagne" className="text-ink-faint hover:text-gold text-base">
+                  Nessuna campagna attiva — scegline una
+                </Link>
+              )}
+            </div>
 
-          <div className="flex items-center gap-2">
-            <OpenPlayerWindow />
-            <ThemeToggle />
-          </div>
-        </header>
+            <div className="flex items-center gap-2">
+              <AmbienceBar />
+              <OpenPlayerWindow />
+              <ThemeToggle />
+            </div>
+          </header>
 
-        <main className="flex min-h-0 flex-1 flex-col p-6">{children}</main>
-      </div>
+          <main className="flex min-h-0 flex-1 flex-col p-6">{children}</main>
+        </div>
+      </AmbienceProvider>
     </div>
   );
 }
