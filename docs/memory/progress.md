@@ -51,7 +51,16 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
-### M2 — il core (nessuna interfaccia ancora)
+### M2 — slice `characters` (provata nel browser)
+
+- Schede PG con i sei punteggi e le competenze: **tutto il resto lo calcola l'app**. Verificato
+  su due personaggi con valori calcolati a mano prima: combaciano tutti.
+- **Party Dashboard** `/gruppo`: CA, PF, Percezione passiva e iniziativa a colpo d'occhio, con
+  tipografia maggiorata. La Percezione più alta del gruppo in oro — verificato che si **sposti**
+  aggiungendo un PG con un punteggio maggiore.
+- PNG con segreto riservato e collegamento allo stat block del bestiario.
+
+### M2 — il core
 
 - **`core/rules/character.ts`** — 13 test: modificatori, tiri salvezza, competenza ed
   **esperienza** (che raddoppia, non somma due volte), punteggi passivi, iniziativa,
@@ -71,8 +80,7 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 
 ## 🔄 In corso
 
-- **M2**: core fatto e testato, manca **tutta l'interfaccia** — schema del database, slice
-  `characters`, `encounters`, `combat`.
+- **M2**: core e `characters` fatti. Mancano `encounters` e `combat`.
 - **M1**: SPEC-0001 e SPEC-0003 chiuse. Restano da provare a mano alcuni criteri di
   SPEC-0002 (elenco, modifica, eliminazione, stato vuoto con più campagne) e di SPEC-0004
   (pulsanti rapidi, interruttori vantaggio, tiro segreto, Invio).

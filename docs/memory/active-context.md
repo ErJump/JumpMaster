@@ -7,9 +7,8 @@
 
 ## Su cosa si sta lavorando
 
-**M2 — Il Tavolo.** Spec scritte (0005, 0006, 0007), ADR-0008 sul bilanciamento, e il **core
-completo e testato**: matematica del personaggio, stima degli scontri, regole SRD dei punti
-ferita, riduttore del combattimento. Manca tutta l'interfaccia.
+**M2 — Il Tavolo.** Core completo e testato. **Slice `characters` fatta e provata** (PG, PNG,
+Party Dashboard). Mancano `encounters` e `combat`.
 
 M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 
@@ -30,8 +29,8 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 
 ## Prossimo passo
 
-1. Schema `characters`, `encounters`, `encounter_monsters`, `combat_events` + migrazione
-2. Slice `characters` + **Party Dashboard** (SPEC-0005)
+1. ✅ Schema M2 + migrazione `0001_m2-tavolo`
+2. ✅ Slice `characters` + **Party Dashboard** (SPEC-0005)
 3. Slice `encounters` con il misuratore di difficoltà (SPEC-0006)
 4. Slice `combat` — il combat tracker (SPEC-0007), la feature più importante dell'app
 5. **Prova su Discord** a schermo condiviso — serve Giampiero
@@ -51,6 +50,10 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
   i suoi numeri non combaceranno con quelli del manuale. Vedi ADR-0008.
 - I mostri muoiono a 0 PF, i PG tirano i salvezza contro morte: prassi di tavolo, scelta in
   `core/events/hit-points.ts`.
+- **Le slice non si importano fra loro (I2)**: le query di `characters` ricevono `campaignId`
+  come parametro, ed è la pagina in `app/` a leggere la campagna attiva e passarla.
+- La Party Dashboard ha una voce di menu propria (`partyFeature`) ma vive nella slice
+  `characters`: è una vista sugli stessi dati, non una feature a sé.
 
 ## Trappole note
 

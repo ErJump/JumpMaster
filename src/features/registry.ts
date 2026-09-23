@@ -6,6 +6,7 @@
  * con un ADR (AGENTS.md §3).
  */
 import { campaignsFeature } from './campaigns/feature.config';
+import { charactersFeature, partyFeature } from './characters/feature.config';
 import { bestiaryFeature } from './bestiary/feature.config';
 import { spellsFeature } from './spells/feature.config';
 import { itemsFeature } from './items/feature.config';
@@ -16,6 +17,8 @@ import { FEATURE_GROUPS, type FeatureConfig, type FeatureGroup } from './types';
 
 export const FEATURES: readonly FeatureConfig[] = [
   campaignsFeature,
+  charactersFeature,
+  partyFeature,
   bestiaryFeature,
   spellsFeature,
   itemsFeature,

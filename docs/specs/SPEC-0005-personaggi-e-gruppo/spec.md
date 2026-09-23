@@ -56,24 +56,24 @@ iniziativa, tiri salvezza, **Percezione / Indagare / Intuizione passive**.
 ## Criteri di accettazione
 
 ### Schede
-- [ ] **AC1** — Posso creare un PG indicando almeno il nome; compare nell'elenco della campagna.
-- [ ] **AC2** — Inseriti i sei punteggi e il livello, l'app mostra modificatori, bonus di competenza
+- [x] **AC1** — Posso creare un PG indicando almeno il nome; compare nell'elenco della campagna.
+- [x] **AC2** — Inseriti i sei punteggi e il livello, l'app mostra modificatori, bonus di competenza
       e modificatore di iniziativa **calcolati**, senza che io li digiti.
-- [ ] **AC3** — Segnando la competenza in Percezione, la Percezione passiva aumenta del bonus di
+- [x] **AC3** — Segnando la competenza in Percezione, la Percezione passiva aumenta del bonus di
       competenza; segnando l'**esperienza**, aumenta del doppio.
-- [ ] **AC4** — I tiri salvezza mostrano il bonus di competenza solo dove sono competente.
-- [ ] **AC5** — Posso creare un PNG con i suoi campi narrativi e collegarlo a uno stat block del bestiario.
-- [ ] **AC6** — Il campo «segreto» di un PNG è visivamente marcato come riservato.
+- [x] **AC4** — I tiri salvezza mostrano il bonus di competenza solo dove sono competente.
+- [x] **AC5** — Posso creare un PNG con i suoi campi narrativi e collegarlo a uno stat block del bestiario.
+- [x] **AC6** — Il campo «segreto» di un PNG è visivamente marcato come riservato.
 - [ ] **AC7** — Posso modificare ed eliminare una scheda; l'eliminazione chiede conferma.
 - [ ] **AC8** — I personaggi appartengono alla campagna attiva: cambiando campagna vedo altri personaggi.
-- [ ] **AC9** — Senza campagna attiva la pagina lo spiega e invita a sceglierne una, invece di rompersi.
+- [x] **AC9** — Senza campagna attiva la pagina lo spiega e invita a sceglierne una, invece di rompersi.
 
 ### Party Dashboard
-- [ ] **AC10** — Una vista mostra tutti i PG del gruppo su una riga ciascuno, con **CA**,
+- [x] **AC10** — Una vista mostra tutti i PG del gruppo su una riga ciascuno, con **CA**,
       **PF massimi**, **Percezione passiva** e **modificatore di iniziativa** leggibili a distanza.
-- [ ] **AC11** — La vista evidenzia il valore **più alto** di Percezione passiva del gruppo: è il
+- [x] **AC11** — La vista evidenzia il valore **più alto** di Percezione passiva del gruppo: è il
       numero che il DM confronta con la CD di un nascondiglio.
-- [ ] **AC12** — Mostra i tiri salvezza di tutto il gruppo in tabella, per risolvere in un colpo solo
+- [x] **AC12** — Mostra i tiri salvezza di tutto il gruppo in tabella, per risolvere in un colpo solo
       un effetto ad area.
 - [ ] **AC13** — È leggibile a schermo condiviso: corpo ≥ 16px, contrasto ≥ 4.5:1.
 - [ ] **AC14** — Il livello medio del gruppo si propaga alla campagna, dove lo userà il costruttore
@@ -83,3 +83,20 @@ iniziativa, tiri salvezza, **Percezione / Indagare / Intuizione passive**.
 
 Creazione guidata del personaggio (l'SRD ha 9 razze e 1 background: non basta). Inventario dei PG.
 Slot incantesimo. Import da D&D Beyond.
+
+## Stato della verifica — 2026-09-23
+
+**Verificati nel browser**, con valori calcolati a mano prima di guardare lo schermo:
+
+- **Elara**, maga elfa liv. 5 (FOR 8, DES 16, COS 14, INT 18, SAG 12, CAR 10; TS in INT e SAG;
+  competente in Arcano, Indagare, Percezione) → iniziativa +3, competenza +3, TS −1/+3/+2/**+7**/**+4**/+0,
+  Percezione passiva 14, Indagare 17, Intuizione 11. **Tutti combaciano** (AC1–AC4).
+- **Gorm**, guerriero nano liv. 5 con SAG 14 e Percezione competente → passiva 15. Aggiunto
+  apposta per verificare che l'evidenziazione **si sposti** sul massimo: prima era su Elara (14),
+  dopo su Gorm (15). Con un solo PG il test sarebbe stato banale (AC10, AC11).
+- **Ismark**, PNG amichevole con segreto e stat block «veteran» → segreto nel riquadro riservato,
+  collegamento al bestiario funzionante (AC5, AC6).
+- Tiri salvezza di tutto il gruppo in tabella, competenti in grassetto (AC12).
+
+**Da provare**: AC7 (modifica ed eliminazione), AC8 (cambio di campagna), AC13 (Discord),
+AC14 (propagazione del livello medio — verrà provata col costruttore di scontri).

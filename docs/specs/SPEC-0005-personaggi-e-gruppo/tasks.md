@@ -1,22 +1,22 @@
 # SPEC-0005 — Tasks
 
 ## core/rules
-- [ ] `character.ts`: `SKILLS`, `abilityModifiers`, `savingThrow`, `passiveSkill`, `initiativeModifier`
-- [ ] Test con casi limite (esperienza, livelli di scatto della competenza, punteggi bassi)
+- [x] `character.ts`: `SKILLS`, `abilityModifiers`, `savingThrow`, `passiveSkill`, `initiativeModifier`
+- [x] Test con casi limite (esperienza, livelli di scatto della competenza, punteggi bassi) — 13 test
 
 ## Dati
-- [ ] Schema Drizzle `characters` + migrazione
-- [ ] `schema.ts` Zod con messaggi in italiano
-- [ ] `derive.ts` + test
-- [ ] `queries.ts`, `actions.ts`
+- [x] Schema Drizzle `characters` + migrazione `0001_m2-tavolo`
+- [x] `schema.ts` Zod con messaggi in italiano
+- [x] `derive.ts` (verificato nel browser contro valori calcolati a mano)
+- [x] `queries.ts`, `actions.ts` — le query ricevono `campaignId` (invariante I2)
 
 ## Interfaccia
-- [ ] `CharacterForm` per PG (sei punteggi, competenze, esperienza)
-- [ ] `CharacterForm` per PNG (campi narrativi, collegamento allo stat block)
-- [ ] Elenco personaggi diviso fra PG e PNG
-- [ ] **Party Dashboard** `/gruppo`: colpo d'occhio + tabella dei tiri salvezza
-- [ ] Segreto del PNG marcato come riservato
-- [ ] Guardia «serve una campagna attiva»
+- [x] `CharacterForm` per PG, con i modificatori aggiornati mentre si digita
+- [x] `CharacterForm` per PNG
+- [x] Elenco personaggi diviso fra PG e PNG
+- [x] **Party Dashboard** `/gruppo`: colpo d'occhio + tiri salvezza + passive
+- [x] Segreto del PNG marcato come riservato
+- [x] Guardia «serve una campagna attiva» (`CampaignRequired`)
 
 ## Verifiche
 - [ ] AC1–AC14 provati a mano nel browser
