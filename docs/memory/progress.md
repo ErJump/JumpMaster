@@ -3,7 +3,7 @@
 > ⚡ **Aggiornare a ogni sessione di lavoro, nello stesso commit che tocca `src/`.**
 > Risponde a: *cosa funziona davvero, cosa manca, cosa è rotto?*
 
-**Ultimo aggiornamento:** 2026-09-22
+**Ultimo aggiornamento:** 2026-09-23
 
 ## ✅ Funziona
 
@@ -50,6 +50,24 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
   Se salta il Wi-Fi a metà sessione, l'app continua a funzionare.
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
+
+### M5 — Mappa del mondo (SPEC-0013, chiusa)
+
+- Segnaposto aggiunti con un clic, spostati, rinominati, tolti. Il nome funziona come `[[Titolo]]`:
+  porta alla nota o propone di crearla. Una nota elenca le mappe in cui compare.
+- **Ai giocatori arrivano solo i luoghi noti** — verificato sullo stream, non a occhio.
+
+### M5 — Mappe tattiche (SPEC-0012, chiusa)
+
+- Mappa da immagine (dimensioni lette dai byte), griglia regolabile, segnalini dal combattimento
+  in corso o liberi (1×1…4×4), trascinamento agganciato alla casella, righello SRD (5 ft a
+  casella, diagonali comprese), nebbia a rettangoli, «Rivela/Copri tutto».
+- **Vista Giocatori in modalità mappa**: nebbia opaca, segnalini sotto la nebbia o nascosti
+  **assenti dai dati inviati**, turno aggiornato dal vivo. Letta la risposta di `/api/live`.
+- La nebbia è un **velo** sopra l'immagine, non un'immagine censurata (ADR-0012): l'immagine
+  intera arriva al browser dei giocatori. Accettabile su Discord (vedono solo lo schermo), da
+  rivedere se un giorno i giocatori apriranno la Vista dai loro dispositivi.
+- La regia dice quale mappa è in onda, con il collegamento all'editor.
 
 ### M4 — Generatori (SPEC-0011, chiusa)
 

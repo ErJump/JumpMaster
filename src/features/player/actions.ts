@@ -5,10 +5,13 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { db } from '@/db/client';
 import { handouts, liveState } from '@/db/schema';
-import { saveImage, deleteImage } from './uploads';
+import { saveImage, deleteImage } from '@/db/files';
 import type { LiveMode } from './types';
 
-function upsertLive(campaignId: number, values: Partial<{ mode: LiveMode; handoutId: number | null; lastRoll: unknown }>) {
+function upsertLive(
+  campaignId: number,
+  values: Partial<{ mode: LiveMode; handoutId: number | null; mapId: number | null; lastRoll: unknown }>,
+) {
   db.insert(liveState)
     .values({ campaignId, ...values, updatedAt: new Date() })
     .onConflictDoUpdate({ target: liveState.campaignId, set: { ...values, updatedAt: new Date() } })
@@ -17,11 +20,17 @@ function upsertLive(campaignId: number, values: Partial<{ mode: LiveMode; handou
 }
 
 export async function setLiveMode(campaignId: number, mode: 'auto' | 'blackout'): Promise<void> {
-  upsertLive(campaignId, { mode, handoutId: null });
+  upsertLive(campaignId, { mode, handoutId: null, mapId: null });
+}
+
+/** Mostra una mappa ai giocatori (SPEC-0012 AC12). */
+export async function showMap(campaignId: number, mapId: number): Promise<void> {
+  upsertLive(campaignId, { mode: 'map', mapId, handoutId: null });
+  revalidatePath(`/mappe/${mapId}`);
 }
 
 export async function showHandout(campaignId: number, handoutId: number): Promise<void> {
-  upsertLive(campaignId, { mode: 'handout', handoutId });
+  upsertLive(campaignId, { mode: 'handout', handoutId, mapId: null });
 }
 
 export interface HandoutFormState {

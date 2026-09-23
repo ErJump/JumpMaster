@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { HP_BAND_LABELS, type HpBand, type PublicCombat, type PublicCombatant } from '@/core/events';
+import type { PublicMap } from '@/core/maps';
+import { FogLayer, GridLayer, PinGlyph, TokenGlyph } from '@/ui/components/MapLayers';
 import type { PlayerView, PublicRoll } from '../types';
 
 const ROLL_VISIBLE_MS = 8000;
@@ -59,6 +61,7 @@ export function PlayerScreen({ initial }: { initial: PlayerView }) {
       {view.kind === 'combat' && <CombatView combat={view.combat} />}
       {view.kind === 'handout' && <HandoutView handout={view.handout} />}
       {view.kind === 'idle' && <IdleView campaign={view.campaign} />}
+      {view.kind === 'map' && <MapView map={view.map} />}
 
       {toast && (
         <div className="panel border-gold fixed bottom-10 left-1/2 max-w-[80vw] -translate-x-1/2 border-2 px-8 py-5 text-center shadow-2xl">
@@ -199,6 +202,42 @@ function PcHealth({ combatant }: { combatant: Extract<PublicCombatant, { kind: '
       <div className="mt-1 h-3 overflow-hidden rounded-xs bg-[var(--jm-surface-raised)]">
         <div className={`h-full transition-all duration-500 ${color}`} style={{ width: `${Math.max(0, ratio) * 100}%` }} />
       </div>
+    </div>
+  );
+}
+
+/**
+ * La mappa per i giocatori: nebbia **opaca**, e soltanto i segnalini che `toPublicMap` ha già
+ * deciso essere visibili — quelli sotto la nebbia o nascosti qui non arrivano proprio (ADR-0012).
+ */
+function MapView({ map }: { map: PublicMap }) {
+  return (
+    <div className="flex flex-1 flex-col items-center gap-4">
+      {map.kind === 'battle' && map.turn && (
+        <p className="text-ink text-3xl">
+          Tocca a <strong className="text-gold">{map.turn}</strong>
+        </p>
+      )}
+      <svg
+        viewBox={`0 0 ${map.width} ${map.height}`}
+        className="panel block max-h-[82vh] w-auto max-w-full"
+        style={{ aspectRatio: `${map.width} / ${map.height}` }}
+      >
+        {map.imageUrl && <image href={map.imageUrl} width={map.width} height={map.height} />}
+        {map.kind === 'battle' && (
+          <>
+            {map.showGrid && <GridLayer width={map.width} height={map.height} grid={map.grid} id="player-grid" />}
+            <FogLayer cols={map.cols} rows={map.rows} grid={map.grid} revealed={new Set(map.revealed)} opacity={1} />
+            {map.tokens.map((token) => (
+              <TokenGlyph key={token.id} {...token} grid={map.grid} dead={token.dead} active={token.active} />
+            ))}
+          </>
+        )}
+        {map.kind === 'world' &&
+          map.pins.map((pin) => (
+            <PinGlyph key={pin.id} x={pin.x * map.width} y={pin.y * map.height} label={pin.label} width={map.width} />
+          ))}
+      </svg>
     </div>
   );
 }

@@ -30,6 +30,9 @@ la feature è progettata male.*
   («Ferito», «Malconcio»), mai i numeri; imboscate nascoste; handout con immagini
 - 🛡️ **Il gruppo** — CA, Percezione passiva e tiri salvezza di tutti, a colpo d'occhio
 - ⚖️ **Scontri** — scegli i mostri e scopri se rischiano di uccidere il gruppo
+- 🗺️ **Mappe** — battlemap con griglia, segnalini presi dal combattimento, righello e nebbia
+  di guerra: ai giocatori arriva solo ciò che hai rivelato. Mappa del mondo con i luoghi
+  collegati alle note, noti o segreti
 
 **La campagna**
 - 🏰 **Campagne**, 🧙 **personaggi e PNG** con i segreti riservati al DM
@@ -44,7 +47,7 @@ la feature è progettata male.*
 - 🎲 **Dadi** con notazione completa (`4d6kh3`, `2d20kh1`, `8d6/2`)
 
 ### In arrivo
-Mappe tattiche con nebbia di guerra e mappa del mondo. Vedi la
+Più mostri da fonti aperte (Open5e), esportazione della campagna, audio d'ambiente. Vedi la
 [roadmap](docs/memory/active-context.md).
 
 ## Requisiti

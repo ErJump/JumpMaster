@@ -112,6 +112,24 @@
       "features": [
         "generators"
       ]
+    },
+    {
+      "id": "SPEC-0012",
+      "dir": "SPEC-0012-mappe-tattiche",
+      "title": "Mappe tattiche con segnalini e nebbia di guerra",
+      "milestone": "M5",
+      "status": "done",
+      "features": [
+        "maps"
+      ]
+    },
+    {
+      "id": "SPEC-0013",
+      "dir": "SPEC-0013-mappa-del-mondo",
+      "title": "Mappa del mondo con segnaposto collegati alle note",
+      "milestone": "M5",
+      "status": "done",
+      "features": []
     }
   ]
 }

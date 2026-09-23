@@ -3,12 +3,16 @@
 > ⚡ **Aggiornare a ogni sessione di lavoro, nello stesso commit che tocca `src/`.**
 > Risponde a: *su cosa stavamo lavorando e qual è il prossimo passo?*
 
-**Ultimo aggiornamento:** 2026-09-22
+**Ultimo aggiornamento:** 2026-09-23
 
 ## Su cosa si sta lavorando
 
+**M5 — Mappe: completa.** Battlemap con griglia, segnalini, righello e nebbia (SPEC-0012) e mappa
+del mondo con segnaposto collegati alle note (SPEC-0013), entrambe chiuse. Prossima: **M6 —
+Integrazioni** (Open5e, import/export campagna, audio, Tauri) — da scrivere la spec.
+
 **M4 — Narrativa: completa.** Note con collegamenti (SPEC-0009), sessioni Lazy DM col diario
-(SPEC-0010) e generatori (SPEC-0011), tutte chiuse. Prossima: **M5 — Mappe**.
+(SPEC-0010) e generatori (SPEC-0011), tutte chiuse.
 
 **M3 — Vista Giocatori: funzionante.** Seconda finestra sincronizzata via SSE, mostri a fasce
 senza numeri, combattenti nascosti, handout con immagini, regia del DM, tiri pubblici. Provata
@@ -44,7 +48,9 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 7. ✅ **M3 — Vista Giocatori**
 8. **Prova su Discord con la Vista Giocatori** — è il test che conta davvero per M3
 9. ✅ **M4 — Narrativa**
-10. **M5 — Mappe**: battlemap con griglia, segnalini, nebbia di guerra; mappa del mondo con segnaposto collegati alle note
+10. ✅ **M5 — Mappe**
+11. **M6 — Integrazioni**: scegliere con Giampiero da cosa partire (import/export è il più utile
+    per non perdere le campagne)
 
 ## Decisioni recenti da ricordare
 
@@ -84,6 +90,13 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - **Invariante I7**: una lettura usata da più slice sta in `src/db/queries/` (es. il registro del
   combattimento, letto da `combat` e da `player`).
 - Il **nome dello scontro** non va mai ai giocatori: è un dato del DM e può essere uno spoiler.
+- **Mappe (ADR-0012)**: la nebbia è un velo SVG sopra l'immagine. `toPublicMap` è l'unico punto che
+  decide cosa della mappa è pubblico; `PublicMap` è un tipo a sé, senza `combatantId` né `hidden`.
+- Una mappa per tutto: `kind: 'battle' | 'world'`. La nebbia si salva come elenco delle caselle
+  **rivelate** (`"col,riga"`): una mappa nuova nasce tutta coperta.
+- I segnalini si legano ai combattenti per `combatantId`; lo stato (morto, di turno) si legge dal
+  combattimento in corso (`runningCombat` in `db/queries/combat-log.ts`), non si copia.
+- Le immagini caricate stanno in `src/db/files.ts` (spostato da `features/player`): le usano handout e mappe.
 
 ## Trappole note
 
@@ -119,6 +132,13 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - **Una prova che passa non esclude una race.** Le build «da clone fresco» passavano sei su sei
   mentre la CI falliva. Quando qualcosa gira in più processi, si verifica **forzando la
   concorrenza** (in scratchpad c'è una batteria di otto processi).
+- **Gestori del puntatore e stato vecchio**: durante un trascinamento i gestori leggono lo stato del
+  render precedente. Il valore definitivo si calcola dall'**evento di rilascio**, lo stato vivo sta
+  in un ref (`latest` in `MapEditor`). Il sintomo fu un righello a 0 ft.
+- **Ogni canale verso i giocatori può tradire.** Nascondere il segnalino non bastava: il nome
+  passava dalla riga del turno. Quando si nasconde qualcosa, cercarlo in **tutto** il JSON inviato.
+- Danno massiccio: 99 danni su un PG da 20 PF è morte istantanea (SRD). Nei test, per un PG
+  «a terra» usare un avanzo sotto i PF massimi.
 - Nel pannello del browser di Claude i click sintetici non raggiungono React: per provare
   l'interattività serve invocare il gestore o usare il setter nativo del valore. **Non è un bug
   dell'app** — verificato che i gestori funzionano.
@@ -132,5 +152,5 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 | M2 | Il Tavolo (party, encounter builder, combat tracker) | 🔄 funzionante, criteri residui da provare |
 | M3 | Vista Giocatori (SSE, Discord) | ✅ funzionante, manca la prova di riconnessione |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ✅ completa |
-| M5 | Mappe (battlemap, fog of war) | ⏳ |
+| M5 | Mappe (battlemap, fog of war, mondo) | ✅ completa |
 | M6 | Integrazioni (Open5e, audio, Tauri) | ⏳ |

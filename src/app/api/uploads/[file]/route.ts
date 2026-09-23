@@ -2,7 +2,7 @@
  * Serve le immagini degli handout. Accetta **solo** nomi generati dall'app (`<uuid>.<ext>`):
  * nessun percorso arbitrario può essere letto dal disco (SPEC-0008 AC14).
  */
-import { readImage } from '@/features/player/uploads';
+import { readImage } from '@/db/files';
 
 export const runtime = 'nodejs';
 

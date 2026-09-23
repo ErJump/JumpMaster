@@ -1,10 +1,12 @@
+import Link from 'next/link';
 import { PageHeader, Panel, Badge, EmptyState } from '@/ui/components/primitives';
 import { Button } from '@/ui/components/Button';
 import { CampaignRequired } from '@/ui/components/CampaignRequired';
 import { getActiveCampaign } from '@/features/campaigns/queries';
 import { liveStateFor, listHandouts, buildPlayerView } from '@/features/player/queries';
 import { setLiveMode, showHandout, deleteHandout, createHandout } from '@/features/player/actions';
-import { imageUrl } from '@/features/player/uploads';
+import { imageUrl } from '@/db/files';
+import { loadMap } from '@/db/queries/maps';
 import { OpenPlayerWindow } from '@/features/player/components/OpenPlayerWindow';
 import { HandoutForm } from '@/features/player/components/HandoutForm';
 
@@ -15,6 +17,7 @@ export default function DirectionPage() {
   const live = liveStateFor(campaign.id);
   const view = buildPlayerView({ id: campaign.id, name: campaign.name });
   const handouts = listHandouts(campaign.id);
+  const shownMap = view.kind === 'map' && live.mapId !== null ? loadMap(live.mapId)?.row : undefined;
 
   const nowShowing =
     live.mode === 'blackout'
@@ -23,7 +26,9 @@ export default function DirectionPage() {
         ? `Combattimento in corso · round ${view.combat.round}`
         : view.kind === 'handout'
           ? `Handout: ${view.handout.title}`
-          : 'Schermata d’attesa';
+          : view.kind === 'map'
+            ? `Mappa: ${shownMap?.name ?? 'senza nome'}`
+            : 'Schermata d’attesa';
 
   return (
     <div className="mx-auto w-full max-w-6xl">
@@ -45,7 +50,14 @@ export default function DirectionPage() {
               className="pointer-events-none absolute top-0 left-0 h-[200%] w-[200%] origin-top-left scale-50 border-0"
             />
           </div>
-          <p className="text-ink mt-2 text-lg">{nowShowing}</p>
+          <p className="text-ink mt-2 text-lg">
+            {nowShowing}
+            {shownMap && (
+              <Link href={`/mappe/${shownMap.id}`} className="text-ink-faint hover:text-gold ml-3 text-base">
+                Apri l’editor
+              </Link>
+            )}
+          </p>
         </section>
 
         <section className="space-y-3">

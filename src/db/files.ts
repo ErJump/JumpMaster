@@ -1,12 +1,15 @@
 /**
- * Immagini degli handout, salvate in locale in `data/uploads/`.
+ * File caricati dal DM — immagini di handout e mappe — salvati in locale in `data/uploads/`.
+ *
+ * Sta nel livello di archiviazione condiviso (`src/db/`: database e file in `data/`) perché lo
+ * usano più slice: `player` per gli handout, `maps` per le mappe (invariante I2).
  * `data/` è fuori da git: le immagini di una campagna restano sul PC del DM.
  */
 import 'server-only';
 import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
-import { detectImageType, UPLOAD_NAME, MIME_BY_EXT, type ImageType } from '@/lib/image-type';
+import { detectImageType, imageSize, UPLOAD_NAME, MIME_BY_EXT, type ImageType } from '@/lib/image-type';
 
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
@@ -23,7 +26,7 @@ function uploadPath(name: string): string {
   return join(/* turbopackIgnore: true */ UPLOAD_DIR, name);
 }
 
-export type SaveResult = { ok: true; file: string } | { ok: false; error: string };
+export type SaveResult = { ok: true; file: string; width: number | null; height: number | null } | { ok: false; error: string };
 
 export async function saveImage(file: File): Promise<SaveResult> {
   if (file.size === 0) return { ok: false, error: 'Il file è vuoto.' };
@@ -37,7 +40,8 @@ export async function saveImage(file: File): Promise<SaveResult> {
   const name = `${randomUUID()}.${type.ext}`;
   await mkdir(UPLOAD_DIR, { recursive: true });
   await writeFile(uploadPath(name), bytes);
-  return { ok: true, file: name };
+  const size = imageSize(bytes);
+  return { ok: true, file: name, width: size?.width ?? null, height: size?.height ?? null };
 }
 
 export async function readImage(name: string): Promise<{ bytes: Buffer; mime: string } | null> {

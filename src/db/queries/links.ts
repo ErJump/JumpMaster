@@ -7,7 +7,7 @@
 import 'server-only';
 import { and, eq } from 'drizzle-orm';
 import { db } from '../client';
-import { characters, notes, sessions } from '../schema';
+import { characters, maps, notes, sessions } from '../schema';
 import { linksTo, linkKey, renameLinks, type LinkTargets } from '@/lib/wikilinks';
 
 export { resolveLinkIn } from '@/lib/wikilinks';
@@ -28,9 +28,14 @@ export function linkTargets(campaignId: number): LinkTargets {
 export function mentionsOf(
   campaignId: number,
   title: string,
-): { notes: Array<{ id: number; title: string }>; sessions: Array<{ id: number; number: number; title: string }> } {
+): {
+  notes: Array<{ id: number; title: string }>;
+  sessions: Array<{ id: number; number: number; title: string }>;
+  maps: Array<{ id: number; name: string }>;
+} {
   const noteRows = db.select().from(notes).where(eq(notes.campaignId, campaignId)).all();
   const sessionRows = db.select().from(sessions).where(eq(sessions.campaignId, campaignId)).all();
+  const mapRows = db.select({ id: maps.id, name: maps.name, pins: maps.pins }).from(maps).where(eq(maps.campaignId, campaignId)).all();
 
   return {
     notes: noteRows
@@ -39,6 +44,10 @@ export function mentionsOf(
     sessions: sessionRows
       .filter((s) => linksTo(`${JSON.stringify(s.prep)}\n${s.journal}`, title))
       .map((s) => ({ id: s.id, number: s.number, title: s.title })),
+    // Le mappe del mondo in cui un segnaposto porta questo nome (SPEC-0013 AC6).
+    maps: mapRows
+      .filter((m) => Array.isArray(m.pins) && (m.pins as Array<{ label?: unknown }>).some((pin) => typeof pin.label === 'string' && linkKey(pin.label) === linkKey(title)))
+      .map((m) => ({ id: m.id, name: m.name })),
   };
 }
 

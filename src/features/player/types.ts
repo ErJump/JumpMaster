@@ -1,6 +1,7 @@
 import type { PublicCombat } from '@/core/events';
+import type { PublicMap } from '@/core/maps';
 
-export type LiveMode = 'auto' | 'handout' | 'blackout';
+export type LiveMode = 'auto' | 'handout' | 'blackout' | 'map';
 
 export interface PublicRoll {
   text: string;
@@ -22,4 +23,5 @@ export type PlayerView =
       roll: PublicRoll | null;
       handout: { title: string; body: string; imageUrl: string | null };
     }
-  | { kind: 'combat'; campaign: string; roll: PublicRoll | null; combat: PublicCombat };
+  | { kind: 'combat'; campaign: string; roll: PublicRoll | null; combat: PublicCombat }
+  | { kind: 'map'; campaign: string; roll: PublicRoll | null; map: PublicMap };

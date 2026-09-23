@@ -1,10 +1,12 @@
 import 'server-only';
-import { and, desc, eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { db } from '@/db/client';
-import { encounters, handouts, liveState, type Handout, type LiveState } from '@/db/schema';
-import { loadCombatEvents } from '@/db/queries/combat-log';
-import { reduceCombat, toPublicCombat } from '@/core/events';
-import { imageUrl } from './uploads';
+import { handouts, liveState, type Handout, type LiveState } from '@/db/schema';
+import { runningCombat } from '@/db/queries/combat-log';
+import { loadMap } from '@/db/queries/maps';
+import { toPublicCombat } from '@/core/events';
+import { toPublicMap } from '@/core/maps';
+import { imageUrl } from '@/db/files';
 import type { PlayerView, PublicRoll } from './types';
 
 export function liveStateFor(campaignId: number): LiveState {
@@ -13,6 +15,7 @@ export function liveStateFor(campaignId: number): LiveState {
       campaignId,
       mode: 'auto',
       handoutId: null,
+      mapId: null,
       lastRoll: null,
       updatedAt: new Date(0),
     }
@@ -21,16 +24,6 @@ export function liveStateFor(campaignId: number): LiveState {
 
 export function listHandouts(campaignId: number): Handout[] {
   return db.select().from(handouts).where(eq(handouts.campaignId, campaignId)).orderBy(desc(handouts.updatedAt)).all();
-}
-
-function runningEncounterId(campaignId: number): number | null {
-  return (
-    db
-      .select({ id: encounters.id })
-      .from(encounters)
-      .where(and(eq(encounters.campaignId, campaignId), eq(encounters.status, 'running')))
-      .get()?.id ?? null
-  );
 }
 
 /**
@@ -57,12 +50,18 @@ export function buildPlayerView(campaign: { id: number; name: string } | undefin
     }
   }
 
-  // Automatico: se c'è un combattimento in corso, i giocatori vedono quello.
-  const encounterId = runningEncounterId(campaign.id);
-  if (encounterId !== null) {
-    const state = reduceCombat(loadCombatEvents(encounterId).map(({ event }) => event));
-    return { kind: 'combat', campaign: campaign.name, roll, combat: toPublicCombat(state) };
+  const combat = runningCombat(campaign.id);
+
+  // Una mappa mostrata esplicitamente vince sull'automatico (SPEC-0012 AC12).
+  if (live.mode === 'map' && live.mapId !== null) {
+    const map = loadMap(live.mapId);
+    if (map && map.row.campaignId === campaign.id) {
+      return { kind: 'map', campaign: campaign.name, roll, map: toPublicMap(map.spec, combat?.state ?? null) };
+    }
   }
+
+  // Automatico: se c'è un combattimento in corso, i giocatori vedono quello.
+  if (combat) return { kind: 'combat', campaign: campaign.name, roll, combat: toPublicCombat(combat.state) };
 
   return { kind: 'idle', campaign: campaign.name, roll };
 }

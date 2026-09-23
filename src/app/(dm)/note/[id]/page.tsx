@@ -40,7 +40,7 @@ export default async function NotePage({ params }: { params: Promise<{ id: strin
 
       <Panel className="p-5">
         <h3 className="small-caps text-gold mb-2 text-lg">Chi la cita</h3>
-        {mentions.notes.length === 0 && mentions.sessions.length === 0 ? (
+        {mentions.notes.length === 0 && mentions.sessions.length === 0 && mentions.maps.length === 0 ? (
           <p className="text-ink-faint text-base">
             Nessuna nota o sessione cita «{note.title}». Scrivi <code className="font-mono">[[{note.title}]]</code> in
             un’altra nota per collegarla.
@@ -51,6 +51,13 @@ export default async function NotePage({ params }: { params: Promise<{ id: strin
               <li key={`n${m.id}`}>
                 <Link href={`/note/${m.id}`} className="text-ink hover:text-gold text-base">
                   📜 {m.title}
+                </Link>
+              </li>
+            ))}
+            {mentions.maps.map((m) => (
+              <li key={`m${m.id}`}>
+                <Link href={`/mappe/${m.id}`} className="text-ink hover:text-gold text-base">
+                  🗺 {m.name}
                 </Link>
               </li>
             ))}

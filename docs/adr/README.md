@@ -34,3 +34,4 @@ file da dieci righe, non vale l'installazione.
 | [0009](./ADR-0009-sse-con-ricalcolo.md) | Vista Giocatori: SSE con ricalcolo periodico | accepted |
 | [0010](./ADR-0010-migrazioni-con-lock.md) | Migrazioni automatiche protette da un lock fra processi | accepted |
 | [0011](./ADR-0011-generatori-contenuto-originale.md) | Generatori: contenuto originale, dati di gioco dall'SRD | accepted |
+| [0012](./ADR-0012-nebbia-come-velo.md) | La nebbia di guerra è un velo, non un'immagine censurata | accepted |

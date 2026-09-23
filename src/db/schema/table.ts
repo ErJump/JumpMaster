@@ -177,10 +177,12 @@ export const liveState = sqliteTable('live_state', {
   campaignId: integer()
     .primaryKey()
     .references(() => campaigns.id, { onDelete: 'cascade' }),
-  mode: text({ enum: ['auto', 'handout', 'blackout'] })
+  mode: text({ enum: ['auto', 'handout', 'blackout', 'map'] })
     .notNull()
     .default('auto'),
   handoutId: integer().references(() => handouts.id, { onDelete: 'set null' }),
+  /** Mappa mostrata ai giocatori in modalità `map` (SPEC-0012). */
+  mapId: integer(),
   /** Ultimo tiro pubblico dalla pagina dei dadi: `{ text, at }`. */
   lastRoll: text({ mode: 'json' }),
   updatedAt: now(),
@@ -231,3 +233,35 @@ export const sessions = sqliteTable(
 );
 
 export type Session = typeof sessions.$inferSelect;
+
+/* ── Mappe (M5) ───────────────────────────────────────────────────── */
+
+/**
+ * Mappe tattiche (SPEC-0012) e del mondo (SPEC-0013). Nebbia, segnalini e segnaposto sono JSON:
+ * cambiano di continuo durante il gioco e si leggono sempre insieme alla mappa.
+ */
+export const maps = sqliteTable(
+  'maps',
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    campaignId: campaignId(),
+    name: text().notNull(),
+    kind: text({ enum: ['battle', 'world'] }).notNull().default('battle'),
+    imageFile: text(),
+    imageWidth: integer().notNull().default(1000),
+    imageHeight: integer().notNull().default(1000),
+    gridSize: integer().notNull().default(70),
+    gridOffsetX: integer().notNull().default(0),
+    gridOffsetY: integer().notNull().default(0),
+    showGrid: integer({ mode: 'boolean' }).notNull().default(true),
+    /** Caselle rivelate, "col,row". Una mappa nuova è tutta coperta. */
+    fog: text({ mode: 'json' }).notNull().default(sql`'[]'`),
+    tokens: text({ mode: 'json' }).notNull().default(sql`'[]'`),
+    pins: text({ mode: 'json' }).notNull().default(sql`'[]'`),
+    createdAt: now(),
+    updatedAt: now(),
+  },
+  (t) => [index('idx_maps_campaign').on(t.campaignId)],
+);
+
+export type MapRow = typeof maps.$inferSelect;

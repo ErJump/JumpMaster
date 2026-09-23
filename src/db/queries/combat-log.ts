@@ -8,8 +8,8 @@
 import 'server-only';
 import { and, asc, eq, isNull } from 'drizzle-orm';
 import { db } from '../client';
-import { combatEvents } from '../schema';
-import type { CombatEvent } from '@/core/events';
+import { combatEvents, encounters } from '../schema';
+import { reduceCombat, type CombatEvent, type CombatState } from '@/core/events';
 
 export interface StoredCombatEvent {
   event: CombatEvent;
@@ -32,4 +32,18 @@ export function loadCombatEvents(encounterId: number): StoredCombatEvent[] {
       const { setup, ...event } = payload as CombatEvent & { setup?: boolean };
       return { event: event as CombatEvent, setup: setup === true };
     });
+}
+
+/**
+ * Stato del combattimento in corso nella campagna, se c'è. Serve alla Vista Giocatori e alle mappe
+ * (segnalini dei morti, di chi è il turno, dei nascosti).
+ */
+export function runningCombat(campaignId: number): { encounterId: number; state: CombatState } | null {
+  const running = db
+    .select({ id: encounters.id })
+    .from(encounters)
+    .where(and(eq(encounters.campaignId, campaignId), eq(encounters.status, 'running')))
+    .get();
+  if (!running) return null;
+  return { encounterId: running.id, state: reduceCombat(loadCombatEvents(running.id).map(({ event }) => event)) };
 }
