@@ -8,6 +8,8 @@ import { updateEncounterMeta, deleteEncounter } from '@/features/encounters/acti
 import { ENCOUNTER_STATUS_LABELS } from '@/features/encounters/schema';
 import { EncounterBuilder } from '@/features/encounters/components/EncounterBuilder';
 import { EncounterMetaForm } from '@/features/encounters/components/EncounterMetaForm';
+import { StartCombatForm } from '@/features/combat/components/StartCombatForm';
+import { startCombat } from '@/features/combat/actions';
 
 export default async function EncounterPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -32,6 +34,14 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
         subtitle={encounter.description || undefined}
         actions={<Badge tone={encounter.status === 'running' ? 'bottle' : 'neutral'}>{ENCOUNTER_STATUS_LABELS[encounter.status]}</Badge>}
       />
+
+      <div className="mb-6">
+        <StartCombatForm
+          action={startCombat.bind(null, encounter.id)}
+          running={encounter.status === 'running'}
+          disabled={monsters.length === 0}
+        />
+      </div>
 
       <EncounterBuilder
         encounterId={encounter.id}

@@ -58,6 +58,8 @@ export type CombatEvent =
   | { type: 'condition-remove'; id: string; condition: string }
   | { type: 'concentration-set'; id: string; spell: string }
   | { type: 'concentration-break'; id: string }
+  /** Il tiro salvezza su Costituzione è riuscito: il promemoria si chiude, l'incantesimo resta. */
+  | { type: 'concentration-kept'; id: string }
   | { type: 'death-save'; id: string; result: DeathSaveResult }
   | { type: 'death-save-reset'; id: string }
   | { type: 'turn-next' }

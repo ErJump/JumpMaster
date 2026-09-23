@@ -17,6 +17,20 @@ import {
 } from '@/lib/srd-format';
 import type { SrdAction, SrdMonsterData } from '@/lib/srd-types';
 
+/**
+ * Richiesta di tiro partita da uno stat block. Il componente non tira: dice **cosa** tirare,
+ * e chi lo ospita decide come (nel combat tracker il risultato finisce nel registro).
+ */
+export interface RollRequest {
+  /** Es. «Scimitar». */
+  action: string;
+  kind: 'attack' | 'damage';
+  notation: string;
+  damageType?: string;
+}
+
+type OnRoll = (request: RollRequest) => void;
+
 const ABILITY_KEY: Record<(typeof ABILITIES)[number], keyof SrdMonsterData> = {
   str: 'strength',
   dex: 'dexterity',
@@ -26,7 +40,7 @@ const ABILITY_KEY: Record<(typeof ABILITIES)[number], keyof SrdMonsterData> = {
   cha: 'charisma',
 };
 
-export function StatBlock({ monster }: { monster: SrdMonsterData }) {
+export function StatBlock({ monster, onRoll }: { monster: SrdMonsterData; onRoll?: OnRoll }) {
   const { savingThrows, skills } = splitProficiencies(monster.proficiencies);
   const proficiency = monster.proficiency_bonus ?? proficiencyBonusForCr(monster.challenge_rating);
 
@@ -111,17 +125,18 @@ export function StatBlock({ monster }: { monster: SrdMonsterData }) {
           <Divider />
           <section className="space-y-3 px-6 py-4">
             {monster.special_abilities.map((ability) => (
-              <ActionEntry key={ability.name} action={ability} />
+              <ActionEntry key={ability.name} action={ability} onRoll={onRoll} />
             ))}
           </section>
         </>
       )}
 
-      <ActionGroup title="Azioni" actions={monster.actions} />
-      <ActionGroup title="Reazioni" actions={monster.reactions} />
+      <ActionGroup title="Azioni" actions={monster.actions} onRoll={onRoll} />
+      <ActionGroup title="Reazioni" actions={monster.reactions} onRoll={onRoll} />
       <ActionGroup
         title="Azioni Leggendarie"
         actions={monster.legendary_actions}
+        onRoll={onRoll}
         note={`${monster.name} può compiere 3 azioni leggendarie, scegliendo fra le opzioni seguenti. Si può usare una sola azione leggendaria alla volta e solo alla fine del turno di un'altra creatura.`}
       />
     </article>
@@ -144,10 +159,12 @@ function ActionGroup({
   title,
   actions,
   note,
+  onRoll,
 }: {
   title: string;
   actions: SrdAction[] | undefined;
   note?: string;
+  onRoll?: OnRoll;
 }) {
   if (!actions || actions.length === 0) return null;
 
@@ -157,31 +174,79 @@ function ActionGroup({
       {note && <p className="text-ink-soft mb-3 text-base leading-relaxed">{note}</p>}
       <div className="space-y-3">
         {actions.map((action) => (
-          <ActionEntry key={action.name} action={action} />
+          <ActionEntry key={action.name} action={action} onRoll={onRoll} />
         ))}
       </div>
     </section>
   );
 }
 
-function ActionEntry({ action }: { action: SrdAction }) {
-  // Dadi e bonus in monospazio: si leggono a colpo d'occhio e sono già pronti
-  // a diventare cliccabili col motore di `core/dice` in M2.
-  const attack = action.attack_bonus !== undefined ? `${formatModifier(action.attack_bonus)} al tiro per colpire` : null;
-  const damage = (action.damage ?? [])
-    .filter((entry) => entry.damage_dice)
-    .map((entry) => `${entry.damage_dice} ${entry.damage_type?.name ?? ''}`.trim());
+function ActionEntry({ action, onRoll }: { action: SrdAction; onRoll?: OnRoll }) {
+  const damage = (action.damage ?? []).filter(
+    (entry): entry is { damage_dice: string; damage_type?: { index: string; name: string } } =>
+      typeof entry.damage_dice === 'string',
+  );
+  const hasNumbers = action.attack_bonus !== undefined || damage.length > 0;
 
   return (
     <div className="text-ink text-base leading-relaxed">
       <p>
         <strong className="text-ink font-semibold italic">{action.name}.</strong> {action.desc}
       </p>
-      {(attack || damage.length > 0) && (
-        <p className="text-ink-faint mt-0.5 font-mono text-sm">
-          {[attack, ...damage].filter(Boolean).join(' · ')}
-        </p>
-      )}
+
+      {hasNumbers &&
+        (onRoll ? (
+          // Nel combat tracker i numeri diventano pulsanti: un clic tira con `core/dice`
+          // e il risultato finisce nel registro (SPEC-0007 AC17).
+          <div className="mt-1 flex flex-wrap gap-2">
+            {action.attack_bonus !== undefined && (
+              <RollButton
+                onClick={() =>
+                  onRoll({ action: action.name, kind: 'attack', notation: `1d20${formatModifier(action.attack_bonus!)}` })
+                }
+              >
+                🎲 {formatModifier(action.attack_bonus)} per colpire
+              </RollButton>
+            )}
+            {damage.map((entry) => (
+              <RollButton
+                key={`${entry.damage_dice}-${entry.damage_type?.index ?? ''}`}
+                onClick={() =>
+                  onRoll({
+                    action: action.name,
+                    kind: 'damage',
+                    notation: entry.damage_dice,
+                    damageType: entry.damage_type?.name,
+                  })
+                }
+              >
+                🎲 {entry.damage_dice} {entry.damage_type?.name ?? ''}
+              </RollButton>
+            ))}
+          </div>
+        ) : (
+          // Nel bestiario restano testo: dadi e bonus in monospazio, leggibili a colpo d'occhio.
+          <p className="text-ink-faint mt-0.5 font-mono text-sm">
+            {[
+              action.attack_bonus !== undefined ? `${formatModifier(action.attack_bonus)} al tiro per colpire` : null,
+              ...damage.map((entry) => `${entry.damage_dice} ${entry.damage_type?.name ?? ''}`.trim()),
+            ]
+              .filter(Boolean)
+              .join(' · ')}
+          </p>
+        ))}
     </div>
+  );
+}
+
+function RollButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="border-wax/50 text-wax hover:bg-wax/10 hover:border-wax rounded-xs border px-2 py-0.5 font-mono text-sm transition-colors"
+    >
+      {children}
+    </button>
   );
 }

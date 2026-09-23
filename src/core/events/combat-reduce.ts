@@ -234,6 +234,15 @@ export function reduceCombat(events: readonly CombatEvent[]): CombatState {
         break;
       }
 
+      case 'concentration-kept': {
+        const target = find(event.id);
+        if (!target) break;
+        const check = pendingConcentration.find((entry) => entry.combatantId === event.id);
+        pendingConcentration = pendingConcentration.filter((entry) => entry.combatantId !== event.id);
+        if (check) say(`${target.name} supera il tiro salvezza e mantiene la concentrazione su ${check.spell}.`);
+        break;
+      }
+
       case 'death-save': {
         const target = find(event.id);
         if (!target) break;
@@ -265,23 +274,35 @@ export function reduceCombat(events: readonly CombatEvent[]): CombatState {
         // Il promemoria della concentrazione vale per il momento in cui è nato: passato il
         // turno, la prova o è stata fatta o non si fa più.
         pendingConcentration = [];
-        if (combatants.length === 0) break;
-        turnIndex++;
-        if (turnIndex >= combatants.length) {
-          turnIndex = 0;
-          round++;
-          say(`Round ${round}.`, 'turn');
+        const sorted = sortCombatants(combatants, insertionOrder);
+        if (sorted.length === 0) break;
+
+        // I morti non hanno turno: nessun DM vuole fermarsi sul Goblin 3 già ucciso.
+        // Chi è privo di sensi invece sì — nel suo turno tira i salvezza contro morte.
+        for (let step = 0; step < sorted.length; step++) {
+          turnIndex++;
+          if (turnIndex >= sorted.length) {
+            turnIndex = 0;
+            round++;
+            say(`Round ${round}.`, 'turn');
+          }
+          if (sorted[turnIndex]?.status !== 'dead') break;
         }
         break;
       }
 
       case 'turn-prev': {
         pendingConcentration = [];
-        if (combatants.length === 0) break;
-        turnIndex--;
-        if (turnIndex < 0) {
-          turnIndex = combatants.length - 1;
-          round = Math.max(1, round - 1);
+        const sorted = sortCombatants(combatants, insertionOrder);
+        if (sorted.length === 0) break;
+
+        for (let step = 0; step < sorted.length; step++) {
+          turnIndex--;
+          if (turnIndex < 0) {
+            turnIndex = sorted.length - 1;
+            round = Math.max(1, round - 1);
+          }
+          if (sorted[turnIndex]?.status !== 'dead') break;
         }
         break;
       }

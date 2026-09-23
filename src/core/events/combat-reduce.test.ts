@@ -259,3 +259,88 @@ describe('reduceCombat — un combattimento intero', () => {
     expect(state.log.length).toBeGreaterThan(5);
   });
 });
+
+describe('reduceCombat — i morti non hanno turno', () => {
+  const quattro: CombatEvent[] = [
+    add('pc', 'Elara', { kind: 'pc', maxHp: 20, initiative: 20 }),
+    add('g1', 'Goblin 1', { maxHp: 7, initiative: 15 }),
+    add('g2', 'Goblin 2', { maxHp: 7, initiative: 10 }),
+    add('g3', 'Goblin 3', { maxHp: 7, initiative: 5 }),
+  ];
+
+  it('«Turno successivo» salta i mostri morti', () => {
+    const state = reduceCombat([...quattro, { type: 'damage', id: 'g1', amount: 99 }, { type: 'turn-next' }]);
+    expect(currentCombatant(state)?.name).toBe('Goblin 2'); // Goblin 1 saltato
+  });
+
+  it('salta più morti di fila', () => {
+    const state = reduceCombat([
+      ...quattro,
+      { type: 'damage', id: 'g1', amount: 99 },
+      { type: 'damage', id: 'g2', amount: 99 },
+      { type: 'turn-next' },
+    ]);
+    expect(currentCombatant(state)?.name).toBe('Goblin 3');
+  });
+
+  it('se i morti stanno in fondo al giro, passa al round successivo', () => {
+    const state = reduceCombat([
+      ...quattro,
+      { type: 'damage', id: 'g2', amount: 99 },
+      { type: 'damage', id: 'g3', amount: 99 },
+      { type: 'turn-next' }, // → Goblin 1
+      { type: 'turn-next' }, // salta G2 e G3 → round 2, Elara
+    ]);
+    expect(currentCombatant(state)?.name).toBe('Elara');
+    expect(state.round).toBe(2);
+  });
+
+  it('NON salta un PG privo di sensi: nel suo turno tira i salvezza contro morte', () => {
+    const state = reduceCombat([
+      ...quattro,
+      { type: 'turn-next' }, // → Goblin 1
+      { type: 'turn-next' }, // → Goblin 2
+      { type: 'turn-next' }, // → Goblin 3
+      { type: 'damage', id: 'pc', amount: 25 }, // Elara sviene
+      { type: 'turn-next' }, // → round 2, Elara
+    ]);
+    expect(state.combatants.find((c) => c.id === 'pc')?.status).toBe('unconscious');
+    expect(currentCombatant(state)?.name).toBe('Elara');
+  });
+
+  it('«Turno precedente» salta i morti anche all’indietro', () => {
+    const state = reduceCombat([
+      ...quattro,
+      { type: 'turn-next' }, // Goblin 1
+      { type: 'turn-next' }, // Goblin 2
+      { type: 'damage', id: 'g1', amount: 99 },
+      { type: 'turn-prev' }, // salta Goblin 1 → Elara
+    ]);
+    expect(currentCombatant(state)?.name).toBe('Elara');
+  });
+
+  it('non va in ciclo infinito se sono tutti morti', () => {
+    const tuttiMorti: CombatEvent[] = [
+      add('a', 'A', { initiative: 10 }),
+      add('b', 'B', { initiative: 5 }),
+      { type: 'damage', id: 'a', amount: 99 },
+      { type: 'damage', id: 'b', amount: 99 },
+      { type: 'turn-next' },
+    ];
+    expect(() => reduceCombat(tuttiMorti)).not.toThrow();
+  });
+});
+
+describe('reduceCombat — concentrazione mantenuta', () => {
+  it('chiude il promemoria senza togliere l’incantesimo', () => {
+    const state = reduceCombat([
+      add('m', 'Elara', { kind: 'pc', maxHp: 30, initiative: 14 }),
+      { type: 'concentration-set', id: 'm', spell: 'Ragnatela' },
+      { type: 'damage', id: 'm', amount: 9 },
+      { type: 'concentration-kept', id: 'm' },
+    ]);
+    expect(state.pendingConcentration).toHaveLength(0);
+    expect(state.combatants[0]?.concentration).toStrictEqual({ spell: 'Ragnatela' });
+    expect(state.log.at(-1)?.text).toContain('mantiene la concentrazione su Ragnatela');
+  });
+});

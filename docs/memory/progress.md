@@ -51,6 +51,20 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M2 — slice `combat`, il combat tracker (provato giocando)
+
+Combattimento vero: 4 goblin e un ogre contro Elara e Gorm, **sbagliando apposta e annullando**.
+
+- Avvio da uno scontro: PG dentro da soli, goblin numerati con iniziativa già tirata.
+- Attacchi **cliccabili** dallo stat block; il danno tirato precompila il campo.
+- **Errore voluto** (40 danni invece di 4) → «Annulla (40 danni)» → Gorm torna a 39/44.
+- Promemoria di concentrazione con la CD calcolata da sola; caduta a 0, tiri contro morte,
+  cura che rimette in piedi e azzera i salvezza.
+- **Pagina ricaricata: stato identico al dettaglio.** Nel database 8 eventi di preparazione e
+  15 azioni nell'ordine esatto, il danno sbagliato scartato.
+- Tre lacune emerse **giocando** e chiuse nel core con test: turno che si fermava sui morti,
+  concentrazione mantenuta senza evento, critico che non raddoppiava i dadi.
+
 ### M2 — slice `encounters` (provata nel browser)
 
 - Costruttore con ricerca sui 334 mostri e **stima istantanea** della difficoltà, che mostra
@@ -88,7 +102,8 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 
 ## 🔄 In corso
 
-- **M2**: core, `characters` e `encounters` fatti. Manca `combat`.
+- **M2**: tutte e tre le slice fatte e provate. Da provare a mano: SPEC-0007 AC2 (PF tirati),
+  AC9 (condizioni), AC15 (leggendari); SPEC-0005 AC7/AC8; SPEC-0006 AC6/AC7.
 - **M1**: SPEC-0001 e SPEC-0003 chiuse. Restano da provare a mano alcuni criteri di
   SPEC-0002 (elenco, modifica, eliminazione, stato vuoto con più campagne) e di SPEC-0004
   (pulsanti rapidi, interruttori vantaggio, tiro segreto, Invio).
@@ -139,7 +154,8 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 | Ricerca lato client invece che FTS5 | Su queste quantità è istantaneo e non richiede viaggi al server | Se il contenuto cresce con Open5e (M6) |
 | ~190 KB di testo regole spediti al client | Serve per la ricerca a pieno testo; su localhost non si nota | Se l'app venisse ospitata in rete |
 | Parser markdown scritto a mano | Il sottoinsieme SRD è chiuso e noto; evita un albero di dipendenze | Se servisse markdown completo |
-| Attacchi degli stat block non ancora cliccabili | Il motore dei dadi è pronto, ma è materia di M2 | M2, col combat tracker |
+| I PG entrano in combattimento sempre a PF pieni | I PF correnti fuori dal combattimento non si tracciano ancora | Quando servirà la continuità fra scontri |
+| Il 20 naturale si registra solo dagli attacchi dello stat block | I PG tirano coi dadi veri: il DM segna «colpo critico» a mano | Se servisse un tiro d'attacco per i PG |
 | `campaigns.partyLevel` non più usato | Il livello si deriva dai PG (`partyProfile`) | Rimuoverlo con una migrazione quando si tocca SPEC-0002 |
 | Migrazioni applicate automaticamente all'avvio | L'utente è un DM, non uno sviluppatore: non deve incontrare un "no such table" | Se l'app diventasse multi-processo |
 | Analisi degli import via regex nel guard | Zero dipendenze per proteggere 2 invarianti semplici | Se compaiono falsi negativi → `ts-morph` + ADR |

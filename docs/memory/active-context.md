@@ -7,8 +7,9 @@
 
 ## Su cosa si sta lavorando
 
-**M2 — Il Tavolo.** Core completo e testato. Slice **`characters`** e **`encounters`** fatte e
-provate nel browser. Manca **`combat`**, il combat tracker.
+**M2 — Il Tavolo: funzionante.** Personaggi, Party Dashboard, costruttore di scontri e
+**combat tracker** fatti e provati giocando un combattimento vero. Restano da provare a mano
+tre criteri di SPEC-0007 (PF tirati, condizioni, leggendari) e la prova su Discord.
 
 M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 
@@ -32,8 +33,10 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 1. ✅ Schema M2 + migrazione `0001_m2-tavolo`
 2. ✅ Slice `characters` + **Party Dashboard** (SPEC-0005)
 3. ✅ Slice `encounters` con il misuratore di difficoltà (SPEC-0006)
-4. Slice `combat` — il combat tracker (SPEC-0007), la feature più importante dell'app
+4. ✅ Slice `combat` — il combat tracker (SPEC-0007)
 5. **Prova su Discord** a schermo condiviso — serve Giampiero
+6. Provare a mano i criteri rimasti di SPEC-0005/0006/0007, poi chiuderle
+7. **M3 — Vista Giocatori**: gli eventi del combattimento sono già il flusso da trasmettere via SSE
 
 ## Decisioni recenti da ricordare
 
@@ -58,6 +61,12 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
   `campaigns.partyLevel` di SPEC-0002 resta ma non è usato dalla stima — candidato a rimozione.
 - Gli scontri si salvano **a ogni clic**, senza pulsante «Salva». Il client manda solo
   `{slug, count}`: PE, PF e CA li rilegge il server dall'SRD.
+- **Il combattimento si riduce nel browser** (`useCombat`): ogni azione si applica all'istante
+  e si salva in una **coda ordinata**. Il database resta la fonte di verità alla ricarica —
+  verificato: stato identico dopo il ricaricamento.
+- Gli eventi di preparazione sono marcati `setup` nel payload e **non si annullano**:
+  annullandoli sparirebbero i combattenti.
+- I mostri morti **non hanno turno**; i PG privi di sensi sì (tirano i salvezza contro morte).
 
 ## Trappole note
 
@@ -71,6 +80,9 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - Niente `setState` dentro `useEffect`: React 19 lo segnala come errore di lint. Per il tema
   si usa `data-theme` + CSS, senza stato React.
 - La CA dei mostri è un **array**: 7 mostri su 334 hanno una voce condizionale. Si prende la prima.
+- React 19 vieta di scrivere un ref durante il render: per le scorciatoie da tastiera si usa
+  `useEffectEvent` (stabile in React 19.3).
+- Per provare un 20 naturale nel browser si forza `Math.random = () => 0.999` per un solo tiro.
 - Nel pannello del browser di Claude i click sintetici non raggiungono React: per provare
   l'interattività serve invocare il gestore o usare il setter nativo del valore. **Non è un bug
   dell'app** — verificato che i gestori funzionano.
@@ -81,7 +93,7 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 |---|---|---|
 | M0 | Fondamenta | ✅ completa |
 | M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 funzionante e offline; restano criteri da provare a mano |
-| M2 | Il Tavolo (party, encounter builder, combat tracker) | 🔄 core fatto, manca l'interfaccia |
+| M2 | Il Tavolo (party, encounter builder, combat tracker) | 🔄 funzionante, criteri residui da provare |
 | M3 | Vista Giocatori (SSE, Discord) | ⏳ |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ⏳ |
 | M5 | Mappe (battlemap, fog of war) | ⏳ |
