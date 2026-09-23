@@ -7,8 +7,8 @@
 
 ## Su cosa si sta lavorando
 
-**M4 — Narrativa: in corso.** Note con collegamenti (SPEC-0009) e sessioni Lazy DM col diario
-(SPEC-0010) fatte e chiuse. Manca **SPEC-0011, i generatori**.
+**M4 — Narrativa: completa.** Note con collegamenti (SPEC-0009), sessioni Lazy DM col diario
+(SPEC-0010) e generatori (SPEC-0011), tutte chiuse. Prossima: **M5 — Mappe**.
 
 **M3 — Vista Giocatori: funzionante.** Seconda finestra sincronizzata via SSE, mostri a fasce
 senza numeri, combattenti nascosti, handout con immagini, regia del DM, tiri pubblici. Provata
@@ -43,7 +43,8 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 6. Provare a mano i criteri rimasti di SPEC-0005/0006/0007, poi chiuderle
 7. ✅ **M3 — Vista Giocatori**
 8. **Prova su Discord con la Vista Giocatori** — è il test che conta davvero per M3
-9. **M4 — Narrativa**: ✅ note (SPEC-0009) · ✅ sessioni (SPEC-0010) · generatori (SPEC-0011)
+9. ✅ **M4 — Narrativa**
+10. **M5 — Mappe**: battlemap con griglia, segnalini, nebbia di guerra; mappa del mondo con segnaposto collegati alle note
 
 ## Decisioni recenti da ricordare
 
@@ -106,6 +107,9 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
   normalizzare i ritorni a capo: `parseMarkdown` lo fa.
 - **Salvataggio automatico**: `ui/hooks/useAutosave` — ritardo, coda ordinata, salva comunque se
   si cambia pagina, chiede conferma se si chiude con modifiche in attesa. Da riusare ovunque.
+- **Generatori**: contenuto originale (ADR-0011), funzioni pure in `core/generators` con `seeded()`
+  per i test. **Rileggere sempre gli esempi generati**: i test controllano la logica, non l'italiano.
+  Le regole di grammatica (articoli, concordanze) sono fissate come test.
 - **Sessioni**: i segreti non rivelati passano alla sessione successiva (`carryOverSecrets`). La
   bozza del diario prende i combattimenti conclusi fra l'inizio di questa sessione e della prossima.
 - I collegamenti `[[…]]` **non si salvano**, si ricavano dal testo. Le operazioni che attraversano
@@ -127,6 +131,6 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 | M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 funzionante e offline; restano criteri da provare a mano |
 | M2 | Il Tavolo (party, encounter builder, combat tracker) | 🔄 funzionante, criteri residui da provare |
 | M3 | Vista Giocatori (SSE, Discord) | ✅ funzionante, manca la prova di riconnessione |
-| M4 | Narrativa (note, prep Lazy DM, generatori) | 🔄 note e sessioni fatte, mancano i generatori |
+| M4 | Narrativa (note, prep Lazy DM, generatori) | ✅ completa |
 | M5 | Mappe (battlemap, fog of war) | ⏳ |
 | M6 | Integrazioni (Open5e, audio, Tauri) | ⏳ |

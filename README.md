@@ -23,16 +23,28 @@ la feature è progettata male.*
 
 ## Caratteristiche
 
-- 🏰 **Campagne** — più campagne in parallelo, con una campagna attiva sempre in vista
-- 📖 **Compendio SRD offline** — 334 mostri, 319 incantesimi, 362 oggetti magici, 33 sezioni di regole
-- ⚖️ **Regole rapide + glossario IT↔EN** — per quando al tavolo chiedono "si può fare?"
-- 🎲 **Lanciatore di dadi** — notazione completa (`4d6kh3`, `2d20kh1`, `8d6/2`), con i singoli dadi in chiaro
-- 🎨 **Estetica fantasy** — stat block in stile manuale, pergamena, oro brunito; leggibile su Discord
+**Al tavolo**
+- ⚔️ **Combat tracker** — iniziativa, punti ferita con le regole SRD fatte bene, condizioni,
+  concentrazione, tiri contro morte, attacchi cliccabili dagli stat block, e **annulla**
+- 📺 **Vista Giocatori** — una seconda finestra da condividere su Discord: i mostri a fasce
+  («Ferito», «Malconcio»), mai i numeri; imboscate nascoste; handout con immagini
+- 🛡️ **Il gruppo** — CA, Percezione passiva e tiri salvezza di tutti, a colpo d'occhio
+- ⚖️ **Scontri** — scegli i mostri e scopri se rischiano di uccidere il gruppo
+
+**La campagna**
+- 🏰 **Campagne**, 🧙 **personaggi e PNG** con i segreti riservati al DM
+- 📜 **Note** che si collegano da sole: scrivi `[[Titolo]]`
+- 🗓 **Sessioni** — preparazione in otto passi alla Lazy DM, diario con il riassunto dei
+  combattimenti; i segreti non scoperti passano alla sessione successiva
+- 🔮 **Generatori** — PNG, taverne, botteghe, voci di paese, spunti, incontri, tesori
+
+**Compendio offline**
+- 📖 334 mostri, 319 incantesimi, 599 oggetti, 48 regole e condizioni, glossario IT↔EN —
+  e la ricerca in italiano trova anche i testi inglesi
+- 🎲 **Dadi** con notazione completa (`4d6kh3`, `2d20kh1`, `8d6/2`)
 
 ### In arrivo
-
-Combat tracker con annulla · Party dashboard · Encounter builder · **Vista Giocatori** da condividere su
-Discord · Note wiki · Generatori narrativi · Mappe con fog of war. Vedi la
+Mappe tattiche con nebbia di guerra e mappa del mondo. Vedi la
 [roadmap](docs/memory/active-context.md).
 
 ## Requisiti

@@ -51,6 +51,14 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M4 — Generatori (SPEC-0011, chiusa)
+
+- PNG, taverne, botteghe, voci di paese, spunti, incontri e tesori. Testi originali in italiano,
+  mostri e oggetti dall'SRD. Salvataggio in un clic come PNG, nota o scontro.
+- **L'incontro generato usa la stessa stima del costruttore**: verificato che uno scontro
+  generato «Duro» risulti «Duro», con lo stesso rapporto, una volta aperto nel costruttore.
+- Regole di grammatica italiana fissate come test (articoli, concordanze, preposizioni).
+
 ### M4 — Sessioni: preparazione Lazy DM e diario (SPEC-0010, chiusa)
 
 - Gli otto passi, ognuno con la spiegazione di a cosa serve; salvataggio automatico.
@@ -150,6 +158,10 @@ Combattimento vero: 4 goblin e un ogre contro Elara e Gorm, **sbagliando apposta
 - Nessuno aperto.
 
 ### Risolti
+
+- **Errori di italiano nei generatori** («Il Orso», «Ponterossa», «una donna… sia stato visto»,
+  complicazioni incoerenti con l'incarico). Invisibili ai test di logica, emersi **rileggendo
+  esempi veri**. Corretti alla radice e fissati come test.
 
 - **Titoli ed elenchi non riconosciuti nelle note.** Le textarea inviano `\r\n` e il parser
   divideva solo su `\n`. Emerso salvando la prima nota vera; i testi SRD usano `\n` e lo

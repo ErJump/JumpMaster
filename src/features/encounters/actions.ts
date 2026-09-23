@@ -107,3 +107,25 @@ export async function deleteEncounter(id: number): Promise<void> {
   refresh();
   redirect('/scontri');
 }
+
+/** Salva un incontro generato come scontro pronto da avviare (SPEC-0011 AC5). */
+export async function createEncounterFromGenerator(
+  campaignId: number,
+  raw: { name: string; entries: unknown },
+): Promise<{ id?: number; error?: string }> {
+  const meta = encounterMetaSchema.safeParse({ name: raw.name, description: '', notes: '' });
+  if (!meta.success) return { error: meta.error.issues[0]?.message };
+
+  const now = new Date();
+  const created = db
+    .insert(encounters)
+    .values({ ...meta.data, campaignId, createdAt: now, updatedAt: now })
+    .returning({ id: encounters.id })
+    .get();
+  if (!created) return { error: 'Scontro non creato.' };
+
+  // Stessa strada del costruttore: il server rilegge PE, PF e CA dall'SRD.
+  const saved = await saveEncounterMonsters(created.id, raw.entries);
+  if (saved.error) return { error: saved.error };
+  return { id: created.id };
+}

@@ -108,7 +108,7 @@
       "dir": "SPEC-0011-generatori",
       "title": "Generatori per l'improvvisazione",
       "milestone": "M4",
-      "status": "in-progress",
+      "status": "done",
       "features": [
         "generators"
       ]

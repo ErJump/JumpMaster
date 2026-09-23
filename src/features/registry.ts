@@ -12,6 +12,7 @@ import { combatFeature } from './combat/feature.config';
 import { playerFeature } from './player/feature.config';
 import { notesFeature } from './notes/feature.config';
 import { sessionsFeature } from './sessions/feature.config';
+import { generatorsFeature } from './generators/feature.config';
 import { bestiaryFeature } from './bestiary/feature.config';
 import { spellsFeature } from './spells/feature.config';
 import { itemsFeature } from './items/feature.config';
@@ -35,6 +36,7 @@ export const FEATURES: readonly FeatureConfig[] = [
   rulesFeature,
   glossaryFeature,
   diceFeature,
+  generatorsFeature,
 ];
 
 /** Le feature raggruppate e ordinate, come le mostra la navigazione. */

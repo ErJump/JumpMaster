@@ -70,3 +70,27 @@ export async function deleteNote(id: number): Promise<void> {
   revalidatePath('/note', 'layout');
   redirect('/note');
 }
+
+/**
+ * Crea una nota da un generatore (SPEC-0011 AC4). Se il titolo è già preso non si rifiuta: si
+ * aggiunge un numero, perché chi rigenera la stessa taverna due volte vuole due note, non un errore.
+ */
+export async function createNoteFromGenerator(
+  campaignId: number,
+  raw: { title: string; kind: string; body: string },
+): Promise<{ id?: number; error?: string }> {
+  const parsed = noteSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Nota non valida.' };
+
+  let title = parsed.data.title;
+  for (let n = 2; titleTaken(campaignId, title); n++) title = `${parsed.data.title} (${n})`;
+
+  const now = new Date();
+  const created = db
+    .insert(notes)
+    .values({ ...parsed.data, title, campaignId, createdAt: now, updatedAt: now })
+    .returning({ id: notes.id })
+    .get();
+  revalidatePath('/note', 'layout');
+  return { id: created?.id };
+}
