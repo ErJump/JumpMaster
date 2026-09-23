@@ -4,7 +4,7 @@ import { eq, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { db } from '@/db/client';
-import { encounters, encounterMonsters, srdMonsters } from '@/db/schema';
+import { encounters, encounterMonsters, monsters as allMonsters } from '@/db/schema';
 import { abilityModifier } from '@/core/rules';
 import { encounterMetaSchema, encounterMonstersSchema } from './schema';
 
@@ -69,7 +69,7 @@ export async function saveEncounterMonsters(id: number, entries: unknown): Promi
   const known =
     slugs.length === 0
       ? []
-      : db.select().from(srdMonsters).where(inArray(srdMonsters.slug, slugs)).all();
+      : db.select().from(allMonsters).where(inArray(allMonsters.slug, slugs)).all();
   const bySlug = new Map(known.map((monster) => [monster.slug, monster]));
 
   const rows = parsed.data.flatMap((entry) => {

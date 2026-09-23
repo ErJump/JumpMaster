@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useSelectedLayoutSegment } from 'next/navigation';
+import { useSearchParams, useSelectedLayoutSegment } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { matchesSearch } from '@/lib/text';
 import { expandQuery } from '@/lib/glossary';
@@ -37,8 +37,8 @@ const BADGE_TONES: Record<BadgeTone, string> = {
 /**
  * Elenco ricercabile del compendio.
  *
- * La ricerca è **interamente lato client**: i metadati di 334 mostri pesano una ventina di
- * kilobyte, e filtrarli in memoria dà una risposta immediata, senza il viaggio al server che
+ * La ricerca è **interamente lato client**: i metadati anche di un paio di migliaia di mostri pesano
+ * poche centinaia di kilobyte, e filtrarli in memoria dà una risposta immediata, senza il viaggio al server che
  * al tavolo si sentirebbe eccome (SPEC-0003 AC18). I dati completi restano sul dettaglio,
  * caricato dal server.
  */
@@ -54,7 +54,16 @@ export function CompendiumBrowser({
   placeholder: string;
 }) {
   const [query, setQuery] = useState('');
-  const [active, setActive] = useState<Record<string, string>>({});
+  // Un filtro può arrivare dall'indirizzo (`/bestiario?source=tob2`): ci si arriva già filtrati.
+  const searchParams = useSearchParams();
+  const [active, setActive] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      filters.flatMap((filter) => {
+        const value = searchParams.get(filter.key);
+        return value && filter.options.some((option) => option.value === value) ? [[filter.key, value]] : [];
+      }),
+    ),
+  );
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Il segmento corrente è lo slug del dettaglio aperto: serve a evidenziare la riga.

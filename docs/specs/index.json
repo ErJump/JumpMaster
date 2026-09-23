@@ -140,6 +140,16 @@
       "features": [
         "archive"
       ]
+    },
+    {
+      "id": "SPEC-0015",
+      "dir": "SPEC-0015-fonti-aperte",
+      "title": "Mostri da fonti aperte (Open5e)",
+      "milestone": "M6",
+      "status": "done",
+      "features": [
+        "sources"
+      ]
     }
   ]
 }

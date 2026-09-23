@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { PageHeader, EmptyState } from '@/ui/components/primitives';
 import { ButtonLink } from '@/ui/components/Button';
 import { getCombatEncounter, loadCombatEvents, statBlocksFor } from '@/features/combat/queries';
+import { monsterSources } from '@/db/queries/monsters';
 import { endCombat } from '@/features/combat/actions';
 import { CombatTracker } from '@/features/combat/components/CombatTracker';
 
@@ -40,6 +41,7 @@ export default async function CombatPage({ params }: { params: Promise<{ id: str
         encounterId={encounterId}
         initial={events}
         statBlocks={statBlocksFor(slugs)}
+        statBlockSources={monsterSources(slugs)}
         endAction={endCombat.bind(null, encounterId)}
       />
     </div>

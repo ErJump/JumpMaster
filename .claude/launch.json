@@ -4,7 +4,21 @@
     {
       "name": "jumpmaster",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "jumpmaster-offline",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "JUMPMASTER_OPEN5E_API=http://127.0.0.1:9/v2",
+        "npm",
+        "run",
+        "dev"
+      ],
       "port": 3000
     }
   ]

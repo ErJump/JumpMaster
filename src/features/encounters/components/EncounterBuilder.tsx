@@ -94,7 +94,7 @@ export function EncounterBuilder({
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Cerca fra i 334 mostri dell’SRD — «goblin», «drago», «non morto»…"
+            placeholder={`Cerca fra ${catalog.length.toLocaleString('it-IT')} mostri — «goblin», «drago», «non morto»…`}
             className="panel text-ink placeholder:text-ink-faint focus:border-gold-soft w-full px-4 py-3 text-lg outline-none"
             autoComplete="off"
           />

@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { StatBlock } from '@/ui/components/StatBlock';
-import { SrdAttribution } from '@/ui/components/primitives';
 import { getMonster } from '@/features/bestiary/queries';
 
 export default async function MonsterPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -10,8 +9,7 @@ export default async function MonsterPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="max-w-3xl">
-      <StatBlock monster={monster.data} />
-      <SrdAttribution className="mt-6" />
+      <StatBlock monster={monster.data} source={monster.source} />
     </div>
   );
 }

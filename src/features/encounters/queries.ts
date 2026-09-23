@@ -1,7 +1,7 @@
 import 'server-only';
 import { asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '@/db/client';
-import { encounters, encounterMonsters, srdMonsters, type Encounter, type EncounterMonster } from '@/db/schema';
+import { encounters, encounterMonsters, monsters as allMonsters, type Encounter, type EncounterMonster } from '@/db/schema';
 import { abilityModifier } from '@/core/rules';
 
 export function listEncounters(campaignId: number): Array<Encounter & { monsterCount: number; totalXp: number }> {
@@ -59,28 +59,28 @@ export interface CatalogMonster {
 }
 
 /**
- * Il catalogo per il selettore: i 334 mostri con quanto serve a comporre uno scontro.
+ * Il catalogo per il selettore: tutti i mostri (SRD e fonti aperte) con quanto serve a comporre uno scontro.
  *
  * La Destrezza sta nel payload JSON: `json_extract` la legge in SQL invece di
- * deserializzare 334 stat block completi solo per un numero.
+ * deserializzare migliaia di stat block completi solo per un numero.
  */
 export function monsterCatalog(): CatalogMonster[] {
   return db
     .select({
-      slug: srdMonsters.slug,
-      name: srdMonsters.name,
-      type: srdMonsters.type,
-      size: srdMonsters.size,
-      cr: srdMonsters.cr,
-      crLabel: srdMonsters.crLabel,
-      xp: srdMonsters.xp,
-      hp: srdMonsters.hp,
-      ac: srdMonsters.ac,
-      dexterity: sql<number>`json_extract(${srdMonsters.data}, '$.dexterity')`,
-      hitDice: srdMonsters.hitDice,
+      slug: allMonsters.slug,
+      name: allMonsters.name,
+      type: allMonsters.type,
+      size: allMonsters.size,
+      cr: allMonsters.cr,
+      crLabel: allMonsters.crLabel,
+      xp: allMonsters.xp,
+      hp: allMonsters.hp,
+      ac: allMonsters.ac,
+      dexterity: sql<number>`json_extract(${allMonsters.data}, '$.dexterity')`,
+      hitDice: allMonsters.hitDice,
     })
-    .from(srdMonsters)
-    .orderBy(asc(srdMonsters.name))
+    .from(allMonsters)
+    .orderBy(asc(allMonsters.name))
     .all()
     .map(({ dexterity, ...monster }) => ({
       ...monster,

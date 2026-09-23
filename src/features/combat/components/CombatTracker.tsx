@@ -3,7 +3,7 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { currentCombatant, type CombatEvent } from '@/core/events';
 import { roll, formatRoll, criticalDamage } from '@/core/dice';
-import type { SrdMonsterData } from '@/lib/srd-types';
+import type { MonsterSource, SrdMonsterData } from '@/lib/srd-types';
 import type { RollRequest } from '@/ui/components/StatBlock';
 import { Button } from '@/ui/components/Button';
 import { useCombat } from './useCombat';
@@ -53,11 +53,13 @@ export function CombatTracker({
   encounterId,
   initial,
   statBlocks,
+  statBlockSources,
   endAction,
 }: {
   encounterId: number;
   initial: Array<{ event: CombatEvent; setup: boolean }>;
   statBlocks: Record<string, SrdMonsterData>;
+  statBlockSources: Record<string, MonsterSource>;
   endAction: () => Promise<void>;
 }) {
   const { state, dispatch, undo, canUndo, lastAction, syncError } = useCombat(encounterId, initial);
@@ -225,6 +227,7 @@ export function CombatTracker({
               key={selected.id}
               combatant={selected}
               statBlock={selected.srdMonsterSlug ? statBlocks[selected.srdMonsterSlug] : undefined}
+              statBlockSource={selected.srdMonsterSlug ? statBlockSources[selected.srdMonsterSlug] : undefined}
               amount={amount}
               onAmountChange={setAmount}
               amountRef={amountRef}

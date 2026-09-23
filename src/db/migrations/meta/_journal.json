@@ -36,6 +36,13 @@
       "when": 1790153894545,
       "tag": "0004_m5-mappe",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1790192121280,
+      "tag": "0005_m6-open5e",
+      "breakpoints": true
     }
   ]
 }

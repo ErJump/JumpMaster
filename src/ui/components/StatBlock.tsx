@@ -15,7 +15,7 @@ import {
   formatArmorClass,
   formatHitPoints,
 } from '@/lib/srd-format';
-import type { SrdAction, SrdMonsterData } from '@/lib/srd-types';
+import type { MonsterSource, SrdAction, SrdMonsterData } from '@/lib/srd-types';
 
 /**
  * Richiesta di tiro partita da uno stat block. Il componente non tira: dice **cosa** tirare,
@@ -31,6 +31,7 @@ export interface RollRequest {
 
 type OnRoll = (request: RollRequest) => void;
 
+
 const ABILITY_KEY: Record<(typeof ABILITIES)[number], keyof SrdMonsterData> = {
   str: 'strength',
   dex: 'dexterity',
@@ -40,7 +41,7 @@ const ABILITY_KEY: Record<(typeof ABILITIES)[number], keyof SrdMonsterData> = {
   cha: 'charisma',
 };
 
-export function StatBlock({ monster, onRoll }: { monster: SrdMonsterData; onRoll?: OnRoll }) {
+export function StatBlock({ monster, onRoll, source }: { monster: SrdMonsterData; onRoll?: OnRoll; source?: MonsterSource }) {
   const { savingThrows, skills } = splitProficiencies(monster.proficiencies);
   const proficiency = monster.proficiency_bonus ?? proficiencyBonusForCr(monster.challenge_rating);
 
@@ -139,7 +140,38 @@ export function StatBlock({ monster, onRoll }: { monster: SrdMonsterData; onRoll
         onRoll={onRoll}
         note={`${monster.name} può compiere 3 azioni leggendarie, scegliendo fra le opzioni seguenti. Si può usare una sola azione leggendaria alla volta e solo alla fine del turno di un'altra creatura.`}
       />
+
+      {source && <SourceLine source={source} />}
     </article>
+  );
+}
+
+function SourceLine({ source }: { source: MonsterSource }) {
+  const external = (href: string) => /^https?:/.test(href);
+  const link = 'decoration-gold-soft underline underline-offset-2';
+  return (
+    <footer className="text-ink-soft border-t-wax/30 border-t px-6 py-3 text-base leading-relaxed">
+      <span className="small-caps text-wax font-semibold">Fonte</span>{' '}
+      {source.href ? (
+        <a href={source.href} target="_blank" rel="noreferrer" className={link}>
+          {source.title}
+        </a>
+      ) : (
+        source.title
+      )}
+      {' · '}
+      {source.publisher}
+      {source.via && ` · via ${source.via}`}
+      {' · '}
+      {source.licenses.map((license, i) => (
+        <span key={license.href}>
+          {i > 0 && ', '}
+          <a href={license.href} className={link} {...(external(license.href) ? { target: '_blank', rel: 'noreferrer' } : {})}>
+            {license.name}
+          </a>
+        </span>
+      ))}
+    </footer>
   );
 }
 

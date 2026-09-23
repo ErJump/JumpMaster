@@ -115,3 +115,16 @@ export interface SrdEquipmentData {
   stealth_disadvantage?: boolean;
   desc?: string[];
 }
+
+/**
+ * Da dove viene il mostro: SRD o un manuale Open5e (ADR-0013). La licenza lo richiede, e il DM
+ * deve sapere se sta usando un mostro «ufficiale» o di un altro editore.
+ */
+export interface MonsterSource {
+  title: string;
+  publisher: string;
+  href?: string;
+  /** Il servizio da cui è stato scaricato, se non viene direttamente dall'editore. */
+  via?: string;
+  licenses: Array<{ name: string; href: string }>;
+}

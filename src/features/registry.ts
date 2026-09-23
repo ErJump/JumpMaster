@@ -21,6 +21,7 @@ import { rulesFeature } from './rules/feature.config';
 import { glossaryFeature } from './glossary/feature.config';
 import { diceFeature } from './dice/feature.config';
 import { archiveFeature } from './archive/feature.config';
+import { sourcesFeature } from './sources/feature.config';
 import { FEATURE_GROUPS, type FeatureConfig, type FeatureGroup } from './types';
 
 export const FEATURES: readonly FeatureConfig[] = [
@@ -38,6 +39,7 @@ export const FEATURES: readonly FeatureConfig[] = [
   itemsFeature,
   rulesFeature,
   glossaryFeature,
+  sourcesFeature,
   diceFeature,
   generatorsFeature,
   archiveFeature,

@@ -7,8 +7,9 @@
 
 ## Su cosa si sta lavorando
 
-**M6 — Integrazioni: in corso.** Fatto: **archivio** (SPEC-0014) — esportare e importare una
-campagna in un file. Restano: bestiario da Open5e, audio d'ambiente, app desktop.
+**M6 — Integrazioni: in corso.** Fatti: **archivio** (SPEC-0014) — esportare e importare una
+campagna in un file; **fonti aperte** (SPEC-0015) — mostri da Open5e. Restano: audio d'ambiente,
+app desktop.
 
 **M5 — Mappe: completa.** Battlemap con griglia, segnalini, righello e nebbia (SPEC-0012) e mappa
 del mondo con segnaposto collegati alle note (SPEC-0013), entrambe chiuse.
@@ -51,7 +52,7 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 8. **Prova su Discord con la Vista Giocatori** — è il test che conta davvero per M3
 9. ✅ **M4 — Narrativa**
 10. ✅ **M5 — Mappe**
-11. **M6 — Integrazioni**: ✅ archivio (SPEC-0014) · Open5e · audio d'ambiente · app desktop
+11. **M6 — Integrazioni**: ✅ archivio (SPEC-0014) · ✅ fonti aperte (SPEC-0015) · audio d'ambiente · app desktop
 
 ## Decisioni recenti da ricordare
 
@@ -102,6 +103,13 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
   così il test gira su un SQLite vero. Le righe dello schema sono `strictObject` e un test
   confronta le chiavi esportate con le colonne: **una colonna nuova va aggiunta anche a
   `features/archive/schema.ts`**, altrimenti il test fallisce (di proposito).
+- **Open5e (ADR-0013)**: i dati li scarica il DM, nel repo non ce n'è traccia. Tabelle
+  `open5e_*` (sola lettura, scritte solo dall'import), **vista `monsters`** che unisce SRD e
+  Open5e: bestiario, scontri e combattimento leggono la vista. **Una colonna nuova nelle tabelle
+  dei mostri va aggiunta anche alla vista** (`src/db/schema/monsters.ts`).
+- Conversione Open5e → formato SRD in `src/content/open5e/normalize.ts`: lo stat block è uno solo.
+- `JUMPMASTER_OPEN5E_API` cambia l'indirizzo di Open5e; la configurazione `jumpmaster-offline`
+  di `.claude/launch.json` lo punta a una porta chiusa per provare l'app **senza rete**.
 - L'import è una **route**, non una Server Action (limite di corpo 10 MB): controlla `Origin` e
   `Content-Type` perché le route non hanno i controlli delle Server Actions.
 - Le forme delle colonne JSON (segnalini, segnaposto, nebbia, preparazione) stanno in
@@ -150,6 +158,9 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - **Un test verde non prova nulla finché non l'hai visto fallire.** Il giro completo dell'archivio
   passava anche togliendo una colonna dall'import. Rompere il codice di proposito (mutazione) e
   guardare il test diventare rosso.
+- **I dati di terzi vanno guardati tutti, non un campione.** Open5e: tipo di danno sempre vuoto,
+  94 azioni leggendarie duplicate. Visti solo convertendo tutte le 1.908 creature e aprendo uno
+  stat block complesso. Uno script in scratchpad che passa l'intero dataset vale più di dieci test.
 - **Un file immagine appartiene a una riga sola**: eliminare la riga cancella il file. Chi copia
   righe (import, duplicazioni future) deve copiare anche il file.
 - Danno massiccio: 99 danni su un PG da 20 PF è morte istantanea (SRD). Nei test, per un PG
@@ -168,4 +179,4 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 | M3 | Vista Giocatori (SSE, Discord) | ✅ funzionante, manca la prova di riconnessione |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ✅ completa |
 | M5 | Mappe (battlemap, fog of war, mondo) | ✅ completa |
-| M6 | Integrazioni (archivio, Open5e, audio, desktop) | 🔄 archivio fatto |
+| M6 | Integrazioni (archivio, Open5e, audio, desktop) | 🔄 archivio e fonti aperte fatti |

@@ -51,6 +51,16 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M6 — Mostri da fonti aperte (SPEC-0015, chiusa)
+
+- Pagina «Fonti aperte»: catalogo Open5e (regolamento 2014), download con avanzamento,
+  riscarica, rimozione con avviso sull'uso. Sei manuali, 1.908 creature disponibili.
+- I mostri scaricati vivono in `open5e_monsters`, **convertiti nel formato SRD**: uno stat block
+  solo, attacchi cliccabili, costruttore di scontri e combat tracker senza modifiche. La vista
+  SQL `monsters` unisce le due fonti.
+- Ogni stat block (anche SRD) dice la sua fonte e la licenza; il testo delle licenze è nell'app.
+- Provato senza rete (server con Open5e irraggiungibile): tutto ciò che è scaricato funziona.
+
 ### M6 — Archivio: esportare e importare una campagna (SPEC-0014, chiusa)
 
 - Una campagna in **un solo file JSON**, immagini comprese (base64). Si importa sempre come

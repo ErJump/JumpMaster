@@ -126,7 +126,7 @@ Questi confini sono la ragione per cui l'app resta gestibile mentre cresce. Viol
 | `src/features/A` non importa da `src/features/B` | Se serve condivisione → sale in `src/core` o `src/ui` |
 | `src/app/**` non contiene logica di dominio | È solo routing e composizione |
 | `better-sqlite3` si importa **solo** lato server | È un modulo nativo: rompe il bundle client |
-| Le tabelle `srd_*` sono **in sola lettura** a runtime | Si rigenerano con `npm run srd:import`. I dati dell'utente non si mescolano mai con quelli dell'SRD |
+| Le tabelle `srd_*` e `open5e_*` sono **in sola lettura** a runtime | Le scrive solo il loro import (`npm run srd:import`, la pagina «Fonti aperte»). I dati dell'utente non si mescolano mai con quelli di gioco. I mostri si leggono dalla vista `monsters` (ADR-0013) |
 | Ogni tabella di dominio ha `campaign_id` | Isolamento fra campagne senza logica speciale |
 
 ---
@@ -138,7 +138,8 @@ Questi confini sono la ragione per cui l'app resta gestibile mentre cresce. Viol
 - **Attribuzione obbligatoria**: il file `NOTICE` va mantenuto e l'attribuzione SRD resta visibile
   nell'app. È una condizione della licenza CC-BY-4.0, non un dettaglio.
 - **Niente contenuti non-SRD nel repo.** Nessun testo dai manuali PHB/MM/DMG. Se serve contenuto in
-  più si aggiunge Open5e (fonti open), non copia-incolla dai manuali.
+  più si aggiunge Open5e (fonti open), non copia-incolla dai manuali. I dati Open5e li scarica il
+  DM nel suo database: **nel repository non entrano**, nemmeno come dati di test (ADR-0013).
 - **L'app funziona offline.** Nessuna feature del tavolo può dipendere dalla rete: se salta il Wi-Fi
   a metà sessione, il combattimento deve continuare. Le chiamate di rete sono ammesse solo in fase
   di import esplicito.

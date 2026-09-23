@@ -35,3 +35,4 @@ file da dieci righe, non vale l'installazione.
 | [0010](./ADR-0010-migrazioni-con-lock.md) | Migrazioni automatiche protette da un lock fra processi | accepted |
 | [0011](./ADR-0011-generatori-contenuto-originale.md) | Generatori: contenuto originale, dati di gioco dall'SRD | accepted |
 | [0012](./ADR-0012-nebbia-come-velo.md) | La nebbia di guerra è un velo, non un'immagine censurata | accepted |
+| [0013](./ADR-0013-mostri-da-open5e.md) | Mostri da Open5e: scaricati dal DM, in tabelle proprie, con la loro licenza | accepted |

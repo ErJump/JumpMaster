@@ -7,14 +7,14 @@
  * e l'`Origin`, se c'è, deve essere questo stesso server.
  */
 import { importArchive, MAX_ARCHIVE_BYTES } from '@/features/archive/server';
+import { isSameOrigin } from '@/lib/same-origin';
 
 export const runtime = 'nodejs';
 
 const fail = (error: string, status: number) => Response.json({ ok: false, error }, { status });
 
 export async function POST(request: Request): Promise<Response> {
-  const origin = request.headers.get('origin');
-  if (origin && origin !== new URL(request.url).origin) return fail('Richiesta non consentita.', 403);
+  if (!isSameOrigin(request)) return fail('Richiesta non consentita.', 403);
   if (!request.headers.get('content-type')?.startsWith('application/json')) return fail('Serve un file di campagna in formato JSON.', 415);
 
   const declared = Number(request.headers.get('content-length') ?? 0);

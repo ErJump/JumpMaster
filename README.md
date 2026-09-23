@@ -46,10 +46,13 @@ la feature è progettata male.*
 **Compendio offline**
 - 📖 334 mostri, 319 incantesimi, 599 oggetti, 48 regole e condizioni, glossario IT↔EN —
   e la ricerca in italiano trova anche i testi inglesi
+- 📚 **Fonti aperte** — altri 1.900 mostri da manuali con licenza aperta (Tome of Beasts,
+  Creature Codex…) via [Open5e](https://open5e.com): si scaricano con un clic, poi funzionano
+  senza rete, ognuno con la sua fonte e la sua licenza
 - 🎲 **Dadi** con notazione completa (`4d6kh3`, `2d20kh1`, `8d6/2`)
 
 ### In arrivo
-Più mostri da fonti aperte (Open5e), audio d'ambiente, app desktop. Vedi la
+Audio d'ambiente, app desktop. Vedi la
 [roadmap](docs/memory/active-context.md).
 
 ## Requisiti

@@ -1,7 +1,7 @@
 import 'server-only';
 import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '@/db/client';
-import { encounters, srdMonsters, type Encounter } from '@/db/schema';
+import { encounters, monsters, type Encounter } from '@/db/schema';
 import type { SrdMonsterData } from '@/lib/srd-types';
 
 // La lettura del registro è condivisa con la Vista Giocatori: vive nel livello dati.
@@ -26,9 +26,9 @@ export function statBlocksFor(slugs: string[]): Record<string, SrdMonsterData> {
   if (unique.length === 0) return {};
   return Object.fromEntries(
     db
-      .select({ slug: srdMonsters.slug, data: srdMonsters.data })
-      .from(srdMonsters)
-      .where(inArray(srdMonsters.slug, unique))
+      .select({ slug: monsters.slug, data: monsters.data })
+      .from(monsters)
+      .where(inArray(monsters.slug, unique))
       .all()
       .map((row) => [row.slug, row.data as SrdMonsterData]),
   );

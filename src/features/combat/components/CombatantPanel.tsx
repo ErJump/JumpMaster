@@ -2,7 +2,7 @@
 
 import { useState, type RefObject } from 'react';
 import type { Combatant } from '@/core/events';
-import type { SrdMonsterData } from '@/lib/srd-types';
+import type { MonsterSource, SrdMonsterData } from '@/lib/srd-types';
 import { StatBlock, type RollRequest } from '@/ui/components/StatBlock';
 import { Button } from '@/ui/components/Button';
 import type { ClientCombatEvent } from '../schema';
@@ -15,6 +15,7 @@ import { CONDITIONS } from './conditions';
 export function CombatantPanel({
   combatant,
   statBlock,
+  statBlockSource,
   amount,
   onAmountChange,
   amountRef,
@@ -23,6 +24,7 @@ export function CombatantPanel({
 }: {
   combatant: Combatant;
   statBlock?: SrdMonsterData;
+  statBlockSource?: MonsterSource;
   amount: string;
   onAmountChange: (value: string) => void;
   amountRef: RefObject<HTMLInputElement | null>;
@@ -232,7 +234,7 @@ export function CombatantPanel({
       </section>
 
       {/* ── Stat block con attacchi cliccabili ───────────────────────── */}
-      {statBlock && <StatBlock monster={statBlock} onRoll={onRoll} />}
+      {statBlock && <StatBlock monster={statBlock} onRoll={onRoll} source={statBlockSource} />}
 
       <div className="pt-2">
         {confirmRemove ? (

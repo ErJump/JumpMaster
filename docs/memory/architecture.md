@@ -33,7 +33,7 @@ registrare una voce di menu* — mai toccare quindici file sparsi.
 | I2 | `src/features/A` non importa da `src/features/B` | Condivisione → sale in `core/` o `ui/` |
 | I3 | `src/app/**` non contiene logica di dominio | È solo composizione |
 | I4 | `better-sqlite3` solo lato server | Modulo nativo: rompe il bundle client |
-| I5 | Tabelle `srd_*` in sola lettura a runtime | Rigenerabili; dati utente mai mescolati con SRD |
+| I5 | Tabelle `srd_*` e `open5e_*` in sola lettura a runtime, scritte solo dal loro import | Rigenerabili; dati utente mai mescolati con quelli di gioco. I mostri si leggono dalla vista `monsters` (ADR-0013) |
 | I6 | Ogni tabella di dominio ha `campaign_id` | Isolamento fra campagne senza logica speciale |
 | I7 | Una lettura usata da **più slice** sta in `src/db/queries/`, non in una delle slice | È il modo di condividere dati senza violare I2 (es. il registro del combattimento, letto da `combat` e da `player`) |
 | I8 | Un file immagine appartiene a **una sola riga** | Eliminare la riga cancella il file: chi copia righe copia anche il file (SPEC-0014) |
