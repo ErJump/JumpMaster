@@ -24,6 +24,7 @@ const EMPTY_STATE: CombatState = {
   combatants: [],
   log: [],
   pendingConcentration: [],
+  everDowned: [],
 };
 
 /**
@@ -54,6 +55,7 @@ export function reduceCombat(events: readonly CombatEvent[]): CombatState {
   let combatants: Combatant[] = [];
   let pendingConcentration: ConcentrationCheck[] = [];
   const log: LogEntry[] = [];
+  const everDowned = new Set<string>();
   const insertionOrder = new Map<string, number>();
 
   const say = (text: string, tone: LogEntry['tone'] = 'neutral') => log.push({ text, tone });
@@ -138,6 +140,7 @@ export function reduceCombat(events: readonly CombatEvent[]): CombatState {
         const hadConcentration = target.concentration;
         const outcome = applyDamage(target, event.amount, { critical: event.critical });
         replace(event.id, outcome.combatant);
+        if (outcome.combatant.currentHp === 0) everDowned.add(event.id);
 
         const source = event.source ? ` (${event.source})` : '';
         say(
@@ -333,6 +336,7 @@ export function reduceCombat(events: readonly CombatEvent[]): CombatState {
     combatants: sorted,
     log,
     pendingConcentration,
+    everDowned: [...everDowned],
   };
 }
 

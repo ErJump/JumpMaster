@@ -7,8 +7,8 @@
 
 ## Su cosa si sta lavorando
 
-**M4 — Narrativa: in corso.** Note con collegamenti `[[…]]` fatte e chiuse (SPEC-0009). Poi
-sessioni con preparazione Lazy DM (SPEC-0010) e generatori (SPEC-0011).
+**M4 — Narrativa: in corso.** Note con collegamenti (SPEC-0009) e sessioni Lazy DM col diario
+(SPEC-0010) fatte e chiuse. Manca **SPEC-0011, i generatori**.
 
 **M3 — Vista Giocatori: funzionante.** Seconda finestra sincronizzata via SSE, mostri a fasce
 senza numeri, combattenti nascosti, handout con immagini, regia del DM, tiri pubblici. Provata
@@ -43,7 +43,7 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 6. Provare a mano i criteri rimasti di SPEC-0005/0006/0007, poi chiuderle
 7. ✅ **M3 — Vista Giocatori**
 8. **Prova su Discord con la Vista Giocatori** — è il test che conta davvero per M3
-9. **M4 — Narrativa**: ✅ note (SPEC-0009) · sessioni (SPEC-0010) · generatori (SPEC-0011)
+9. **M4 — Narrativa**: ✅ note (SPEC-0009) · ✅ sessioni (SPEC-0010) · generatori (SPEC-0011)
 
 ## Decisioni recenti da ricordare
 
@@ -104,6 +104,10 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - Le immagini si validano sui **byte iniziali**, mai su estensione o tipo dichiarato.
 - **Le textarea inviano `\r\n`** (standard HTML). Ogni parser di testo scritto dall'utente deve
   normalizzare i ritorni a capo: `parseMarkdown` lo fa.
+- **Salvataggio automatico**: `ui/hooks/useAutosave` — ritardo, coda ordinata, salva comunque se
+  si cambia pagina, chiede conferma se si chiude con modifiche in attesa. Da riusare ovunque.
+- **Sessioni**: i segreti non rivelati passano alla sessione successiva (`carryOverSecrets`). La
+  bozza del diario prende i combattimenti conclusi fra l'inizio di questa sessione e della prossima.
 - I collegamenti `[[…]]` **non si salvano**, si ricavano dal testo. Le operazioni che attraversano
   note, sessioni e personaggi (citazioni, rinomina) stanno in `src/db/queries/links.ts` (I7).
 - **Il database si apre SOLO con `openDatabase()`** (`src/db/open.ts`): migrazioni sotto un lock
@@ -123,6 +127,6 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 | M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 funzionante e offline; restano criteri da provare a mano |
 | M2 | Il Tavolo (party, encounter builder, combat tracker) | 🔄 funzionante, criteri residui da provare |
 | M3 | Vista Giocatori (SSE, Discord) | ✅ funzionante, manca la prova di riconnessione |
-| M4 | Narrativa (note, prep Lazy DM, generatori) | 🔄 note fatte |
+| M4 | Narrativa (note, prep Lazy DM, generatori) | 🔄 note e sessioni fatte, mancano i generatori |
 | M5 | Mappe (battlemap, fog of war) | ⏳ |
 | M6 | Integrazioni (Open5e, audio, Tauri) | ⏳ |

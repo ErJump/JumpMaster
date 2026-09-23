@@ -1,9 +1,9 @@
 # SPEC-0010 — Tasks
-- [ ] `core/sessions/prep.ts`: tipi, passi, `carryOverSecrets` + test
-- [ ] `core/events/summary.ts`: `summarizeCombat` + test
-- [ ] Schema `sessions` + migrazione
-- [ ] Slice `sessions`: query, azioni, salvataggio automatico
-- [ ] Editor della preparazione (8 passi, liste, segreti con «rivelato»)
-- [ ] Diario con «Bozza dal registro»
-- [ ] Elenco = cronologia
-- [ ] AC1–AC10 provati nel browser
+- [x] `core/sessions/prep.ts`: tipi, passi, `carryOverSecrets` + test
+- [x] `core/events/summary.ts`: `summarizeCombat` + test
+- [x] Schema `sessions` + migrazione
+- [x] Slice `sessions`: query, azioni, salvataggio automatico
+- [x] Editor della preparazione (8 passi, liste, segreti con «rivelato»)
+- [x] Diario con «Bozza dal registro»
+- [x] Elenco = cronologia
+- [x] AC1–AC10 provati nel browser

@@ -91,4 +91,6 @@ export interface CombatState {
   combatants: Combatant[];
   log: LogEntry[];
   pendingConcentration: ConcentrationCheck[];
+  /** Chi è sceso a 0 PF almeno una volta, anche se poi è stato rialzato: serve al diario. */
+  everDowned: string[];
 }

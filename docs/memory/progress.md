@@ -51,6 +51,14 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M4 — Sessioni: preparazione Lazy DM e diario (SPEC-0010, chiusa)
+
+- Gli otto passi, ognuno con la spiegazione di a cosa serve; salvataggio automatico.
+- Vista «al tavolo» coi collegamenti cliccabili e i segreti da spuntare durante il gioco.
+- **I segreti non scoperti passano da soli alla sessione successiva** — verificato.
+- Diario con «Bozza dal registro»: il riassunto dei combattimenti, dalla riduzione degli eventi.
+- Cronologia con i contatori dei segreti.
+
 ### M4 — Note della campagna (SPEC-0009, chiusa)
 
 - Note con `[[Titolo]]`: verso una nota, verso un personaggio, o «crea questa nota» col titolo già

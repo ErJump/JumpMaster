@@ -98,7 +98,7 @@
       "dir": "SPEC-0010-sessioni",
       "title": "Sessioni: preparazione Lazy DM e diario",
       "milestone": "M4",
-      "status": "in-progress",
+      "status": "done",
       "features": [
         "sessions"
       ]

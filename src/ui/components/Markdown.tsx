@@ -66,7 +66,7 @@ function Inline({ nodes, resolve }: { nodes: InlineNode[]; resolve?: LinkResolve
   );
 }
 
-function BlockView({ block, resolve }: { block: Block; resolve?: LinkResolver }) {
+function BlockView({ block, resolve, compact }: { block: Block; resolve?: LinkResolver; compact?: boolean }) {
   switch (block.kind) {
     case 'heading': {
       const Tag = (['h2', 'h2', 'h3', 'h4', 'h5', 'h6'] as const)[block.level - 1] ?? 'h4';
@@ -79,7 +79,7 @@ function BlockView({ block, resolve }: { block: Block; resolve?: LinkResolver })
 
     case 'paragraph':
       return (
-        <p className="text-ink my-3 leading-relaxed">
+        <p className={`text-ink leading-relaxed ${compact ? 'my-0' : 'my-3'}`}>
           <Inline nodes={block.content} resolve={resolve} />
         </p>
       );
@@ -131,12 +131,24 @@ function BlockView({ block, resolve }: { block: Block; resolve?: LinkResolver })
   }
 }
 
-export function Markdown({ source, resolveLink }: { source: string; resolveLink?: LinkResolver }) {
+/**
+ * @param compact Per le voci brevi (elenchi, segreti): i paragrafi perdono i margini, così il
+ *   testo resta allineato alla casella o al punto elenco che lo precede.
+ */
+export function Markdown({
+  source,
+  resolveLink,
+  compact = false,
+}: {
+  source: string;
+  resolveLink?: LinkResolver;
+  compact?: boolean;
+}) {
   const blocks = parseMarkdown(source);
   return (
     <div>
       {blocks.map((block, index) => (
-        <BlockView key={index} block={block} resolve={resolveLink} />
+        <BlockView key={index} block={block} resolve={resolveLink} compact={compact} />
       ))}
     </div>
   );
