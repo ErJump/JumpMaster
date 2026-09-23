@@ -33,3 +33,4 @@ file da dieci righe, non vale l'installazione.
 | [0008](./ADR-0008-bilanciamento-scontri.md) | Bilanciamento scontri senza le tabelle della Guida del DM | accepted |
 | [0009](./ADR-0009-sse-con-ricalcolo.md) | Vista Giocatori: SSE con ricalcolo periodico | accepted |
 | [0010](./ADR-0010-migrazioni-con-lock.md) | Migrazioni automatiche protette da un lock fra processi | accepted |
+| [0011](./ADR-0011-generatori-contenuto-originale.md) | Generatori: contenuto originale, dati di gioco dall'SRD | accepted |

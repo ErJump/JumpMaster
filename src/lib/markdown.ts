@@ -12,6 +12,8 @@
 
 export type InlineNode =
   | { kind: 'text'; value: string }
+  /** `[[destinazione]]` o `[[destinazione|etichetta]]`: collegamento fra note (SPEC-0009). */
+  | { kind: 'wikilink'; target: string; value: string }
   | { kind: 'strong'; value: string }
   | { kind: 'em'; value: string }
   | { kind: 'strongEm'; value: string };
@@ -24,8 +26,10 @@ export type Block =
 
 /* ── inline ───────────────────────────────────────────────────────── */
 
-// L'ordine conta: *** va tentato prima di ** e di *, altrimenti vince il più corto.
-const INLINE_PATTERN = /(\*\*\*(?:[^*]|\*(?!\*\*))+\*\*\*|\*\*(?:[^*]|\*(?!\*))+\*\*|\*[^*\n]+\*)/g;
+// L'ordine conta: il collegamento `[[…]]` per primo, poi *** prima di ** e di *,
+// altrimenti vincerebbe il più corto.
+const INLINE_PATTERN =
+  /(\[\[[^\[\]|]+?(?:\|[^\[\]]+?)?\]\]|\*\*\*(?:[^*]|\*(?!\*\*))+\*\*\*|\*\*(?:[^*]|\*(?!\*))+\*\*|\*[^*\n]+\*)/g;
 
 export function parseInline(text: string): InlineNode[] {
   const nodes: InlineNode[] = [];
@@ -39,7 +43,10 @@ export function parseInline(text: string): InlineNode[] {
       nodes.push({ kind: 'text', value: text.slice(lastIndex, start) });
     }
 
-    if (token.startsWith('***')) nodes.push({ kind: 'strongEm', value: token.slice(3, -3) });
+    if (token.startsWith('[[')) {
+      const [target = '', label] = token.slice(2, -2).split('|');
+      nodes.push({ kind: 'wikilink', target: target.trim(), value: (label ?? target).trim() });
+    } else if (token.startsWith('***')) nodes.push({ kind: 'strongEm', value: token.slice(3, -3) });
     else if (token.startsWith('**')) nodes.push({ kind: 'strong', value: token.slice(2, -2) });
     else nodes.push({ kind: 'em', value: token.slice(1, -1) });
 
@@ -69,8 +76,19 @@ function splitRow(line: string): string[] {
     .map((cell) => cell.trim());
 }
 
+/**
+ * Ritorni a capo uniformati a `\n`.
+ *
+ * Una `<textarea>` invia **sempre** `\r\n` (lo impone lo standard HTML): senza questa
+ * normalizzazione ogni riga scritta da un utente finirebbe con un `\r`, e titoli ed elenchi non
+ * verrebbero riconosciuti. I testi SRD usano `\n`, per questo il problema non emergeva prima delle note.
+ */
+function normalizeNewlines(source: string): string {
+  return source.replace(/\r\n?/g, '\n');
+}
+
 export function parseMarkdown(source: string): Block[] {
-  const lines = source.split('\n');
+  const lines = normalizeNewlines(source).split('\n');
   const blocks: Block[] = [];
 
   let paragraph: string[] = [];
@@ -147,7 +165,8 @@ export function parseMarkdown(source: string): Block[] {
  * esattamente il titolo che la pagina mostra già di suo. Lasciarlo significherebbe
  * far leggere lo stesso titolo due volte di fila.
  */
-export function stripLeadingHeading(source: string, title: string): string {
+export function stripLeadingHeading(rawSource: string, title: string): string {
+  const source = normalizeNewlines(rawSource);
   const match = /^\s*#{1,6}\s+(.*)$/m.exec(source);
   if (!match || match.index !== 0) return source;
   if (match[1]!.trim().toLowerCase() !== title.trim().toLowerCase()) return source;

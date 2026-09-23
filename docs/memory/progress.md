@@ -51,6 +51,14 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M4 — Note della campagna (SPEC-0009, chiusa)
+
+- Note con `[[Titolo]]`: verso una nota, verso un personaggio, o «crea questa nota» col titolo già
+  scritto. Ogni nota elenca chi la cita. Maiuscole e accenti non contano.
+- **Rinomina che riscrive i collegamenti ovunque** (note e sessioni), conservando le etichette.
+  Titoli duplicati rifiutati, perché renderebbero ambiguo ogni collegamento.
+- Ricerca istantanea anche nel testo.
+
 ### M3 — Vista Giocatori (provata a due finestre)
 
 - Finestra separata `/player`, tipografia maggiorata, aggiornata via **SSE senza ricaricare**.
@@ -134,6 +142,10 @@ Combattimento vero: 4 goblin e un ogre contro Elara e Gorm, **sbagliando apposta
 - Nessuno aperto.
 
 ### Risolti
+
+- **Titoli ed elenchi non riconosciuti nelle note.** Le textarea inviano `\r\n` e il parser
+  divideva solo su `\n`. Emerso salvando la prima nota vera; i testi SRD usano `\n` e lo
+  nascondevano. Corretto nel parser, con test di regressione.
 
 - **Race condition nelle migrazioni automatiche** (ADR-0010). La CI di M3 è fallita con «table
   already exists»: i processi paralleli di `next build` migravano tutti insieme. Il difetto c'era

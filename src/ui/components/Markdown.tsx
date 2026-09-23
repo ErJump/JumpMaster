@@ -1,5 +1,12 @@
 /** Rendering dei blocchi prodotti da `@/lib/markdown`. Nessuna logica: solo presentazione. */
+import Link from 'next/link';
 import { parseMarkdown, type Block, type InlineNode } from '@/lib/markdown';
+
+/**
+ * Risolve un collegamento `[[…]]` (SPEC-0009). Chi usa il componente decide dove porta:
+ * il componente non sa nulla di note o personaggi. Senza risolutore, i collegamenti restano testo.
+ */
+export type LinkResolver = (target: string) => { href: string; missing: boolean };
 
 const HEADING_CLASS: Record<number, string> = {
   1: 'text-gold text-3xl mt-8 mb-2',
@@ -10,11 +17,29 @@ const HEADING_CLASS: Record<number, string> = {
   6: 'text-ink-soft text-base mt-4 mb-1 small-caps',
 };
 
-function Inline({ nodes }: { nodes: InlineNode[] }) {
+function Inline({ nodes, resolve }: { nodes: InlineNode[]; resolve?: LinkResolver }) {
   return (
     <>
       {nodes.map((node, index) => {
         switch (node.kind) {
+          case 'wikilink': {
+            if (!resolve) return <span key={index}>{node.value}</span>;
+            const { href, missing } = resolve(node.target);
+            return (
+              <Link
+                key={index}
+                href={href}
+                title={missing ? `«${node.target}» non esiste ancora: clicca per crearla` : node.target}
+                className={
+                  missing
+                    ? 'text-wax decoration-wax/60 underline decoration-dashed underline-offset-2'
+                    : 'text-gold decoration-gold-soft underline underline-offset-2'
+                }
+              >
+                {node.value}
+              </Link>
+            );
+          }
           case 'strong':
             return (
               <strong key={index} className="text-ink font-semibold">
@@ -41,13 +66,13 @@ function Inline({ nodes }: { nodes: InlineNode[] }) {
   );
 }
 
-function BlockView({ block }: { block: Block }) {
+function BlockView({ block, resolve }: { block: Block; resolve?: LinkResolver }) {
   switch (block.kind) {
     case 'heading': {
       const Tag = (['h2', 'h2', 'h3', 'h4', 'h5', 'h6'] as const)[block.level - 1] ?? 'h4';
       return (
         <Tag className={HEADING_CLASS[block.level] ?? HEADING_CLASS[4]}>
-          <Inline nodes={block.content} />
+          <Inline nodes={block.content} resolve={resolve} />
         </Tag>
       );
     }
@@ -55,7 +80,7 @@ function BlockView({ block }: { block: Block }) {
     case 'paragraph':
       return (
         <p className="text-ink my-3 leading-relaxed">
-          <Inline nodes={block.content} />
+          <Inline nodes={block.content} resolve={resolve} />
         </p>
       );
 
@@ -69,7 +94,7 @@ function BlockView({ block }: { block: Block }) {
         >
           {block.items.map((item, index) => (
             <li key={index}>
-              <Inline nodes={item} />
+              <Inline nodes={item} resolve={resolve} />
             </li>
           ))}
         </Tag>
@@ -84,7 +109,7 @@ function BlockView({ block }: { block: Block }) {
               <tr className="border-b-gold-soft border-b">
                 {block.headers.map((header, index) => (
                   <th key={index} className="small-caps text-gold px-3 py-2 font-semibold">
-                    <Inline nodes={header} />
+                    <Inline nodes={header} resolve={resolve} />
                   </th>
                 ))}
               </tr>
@@ -94,7 +119,7 @@ function BlockView({ block }: { block: Block }) {
                 <tr key={rowIndex} className="border-border/60 even:bg-surface-raised/40 border-b">
                   {row.map((cell, cellIndex) => (
                     <td key={cellIndex} className="text-ink px-3 py-1.5">
-                      <Inline nodes={cell} />
+                      <Inline nodes={cell} resolve={resolve} />
                     </td>
                   ))}
                 </tr>
@@ -106,12 +131,12 @@ function BlockView({ block }: { block: Block }) {
   }
 }
 
-export function Markdown({ source }: { source: string }) {
+export function Markdown({ source, resolveLink }: { source: string; resolveLink?: LinkResolver }) {
   const blocks = parseMarkdown(source);
   return (
     <div>
       {blocks.map((block, index) => (
-        <BlockView key={index} block={block} />
+        <BlockView key={index} block={block} resolve={resolveLink} />
       ))}
     </div>
   );

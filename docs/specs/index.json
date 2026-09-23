@@ -82,6 +82,36 @@
       "features": [
         "player"
       ]
+    },
+    {
+      "id": "SPEC-0009",
+      "dir": "SPEC-0009-note-campagna",
+      "title": "Note della campagna con collegamenti",
+      "milestone": "M4",
+      "status": "done",
+      "features": [
+        "notes"
+      ]
+    },
+    {
+      "id": "SPEC-0010",
+      "dir": "SPEC-0010-sessioni",
+      "title": "Sessioni: preparazione Lazy DM e diario",
+      "milestone": "M4",
+      "status": "in-progress",
+      "features": [
+        "sessions"
+      ]
+    },
+    {
+      "id": "SPEC-0011",
+      "dir": "SPEC-0011-generatori",
+      "title": "Generatori per l'improvvisazione",
+      "milestone": "M4",
+      "status": "in-progress",
+      "features": [
+        "generators"
+      ]
     }
   ]
 }

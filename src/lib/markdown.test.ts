@@ -30,6 +30,23 @@ describe('parseInline', () => {
   });
 });
 
+describe('parseInline — collegamenti', () => {
+  it('riconosce [[destinazione]] e [[destinazione|etichetta]]', () => {
+    expect(parseInline('Vai a [[Vallaki]] o alla [[Rocca di Ravenloft|rocca]].')).toStrictEqual([
+      { kind: 'text', value: 'Vai a ' },
+      { kind: 'wikilink', target: 'Vallaki', value: 'Vallaki' },
+      { kind: 'text', value: ' o alla ' },
+      { kind: 'wikilink', target: 'Rocca di Ravenloft', value: 'rocca' },
+      { kind: 'text', value: '.' },
+    ]);
+  });
+
+  it('convive col grassetto', () => {
+    const nodes = parseInline('**Attenzione**: [[Strahd]]');
+    expect(nodes.map((n) => n.kind)).toStrictEqual(['strong', 'text', 'wikilink']);
+  });
+});
+
 describe('parseMarkdown', () => {
   it('riconosce i titoli con il loro livello', () => {
     const blocks = parseMarkdown('## Actions in Combat\n\n### Dash');
@@ -78,6 +95,20 @@ describe('parseMarkdown', () => {
   it('non produce blocchi da una stringa vuota', () => {
     expect(parseMarkdown('')).toStrictEqual([]);
     expect(parseMarkdown('\n\n  \n')).toStrictEqual([]);
+  });
+});
+
+describe('parseMarkdown — ritorni a capo di Windows e dei form', () => {
+  it('riconosce titoli ed elenchi scritti in una textarea, che invia sempre \\r\\n', () => {
+    // Caso reale: la prima nota salvata dall'app aveva "## Il villaggio\r\n" reso come testo.
+    const blocks = parseMarkdown('## Il villaggio\r\n\r\nTesto.\r\n\r\n- primo\r\n- secondo');
+    expect(blocks.map((b) => b.kind)).toStrictEqual(['heading', 'paragraph', 'list']);
+    expect((blocks[2] as { items: unknown[] }).items).toHaveLength(2);
+  });
+
+  it('non lascia \\r dentro il testo', () => {
+    const json = JSON.stringify(parseMarkdown('riga uno\r\nriga due'));
+    expect(json).not.toContain('\\r');
   });
 });
 

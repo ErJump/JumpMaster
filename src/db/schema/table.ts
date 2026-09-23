@@ -187,3 +187,47 @@ export const liveState = sqliteTable('live_state', {
 });
 
 export type LiveState = typeof liveState.$inferSelect;
+
+/* ── Narrativa (M4) ───────────────────────────────────────────────── */
+
+/** Note della campagna (SPEC-0009). I collegamenti `[[…]]` si ricavano dal testo, non si salvano. */
+export const notes = sqliteTable(
+  'notes',
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    campaignId: campaignId(),
+    title: text().notNull(),
+    kind: text({ enum: ['place', 'faction', 'plot', 'lore', 'other'] })
+      .notNull()
+      .default('other'),
+    body: text().notNull().default(''),
+    createdAt: now(),
+    updatedAt: now(),
+  },
+  (t) => [index('idx_notes_campaign').on(t.campaignId)],
+);
+
+export type Note = typeof notes.$inferSelect;
+
+/**
+ * Sessioni (SPEC-0010): la preparazione prima, il diario dopo. L'elenco è la cronologia.
+ * `prep` è JSON validato al confine: otto passi a struttura fissa, non valeva normalizzarli.
+ */
+export const sessions = sqliteTable(
+  'sessions',
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    campaignId: campaignId(),
+    number: integer().notNull(),
+    title: text().notNull().default(''),
+    /** Data in cui si è giocata, `AAAA-MM-GG`. Facoltativa: si prepara prima di sapere quando. */
+    playedOn: text(),
+    prep: text({ mode: 'json' }).notNull().default(sql`'{}'`),
+    journal: text().notNull().default(''),
+    createdAt: now(),
+    updatedAt: now(),
+  },
+  (t) => [index('idx_sessions_campaign').on(t.campaignId, t.number)],
+);
+
+export type Session = typeof sessions.$inferSelect;
