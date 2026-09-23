@@ -135,6 +135,13 @@ Combattimento vero: 4 goblin e un ogre contro Elara e Gorm, **sbagliando apposta
 
 ### Risolti
 
+- **Race condition nelle migrazioni automatiche** (ADR-0010). La CI di M3 è fallita con «table
+  already exists»: i processi paralleli di `next build` migravano tutti insieme. Il difetto c'era
+  da settimane e le CI passavano **per fortuna di tempi**; in locale sei build su sei riuscivano.
+  Riprodotto forzando la concorrenza (otto processi: 9 round su 10 falliti), corretto con un lock
+  fra processi, ribadito con la stessa batteria (0 su 10). Nello stesso giro è emerso che
+  `npm run setup` **non funzionava da clone fresco**: l'import richiedeva un database già esistente.
+
 - **La CI è fallita al terzo push** e ha scoperto un bug vero, non un capriccio
   dell'ambiente: `data/` è in `.gitignore`, quindi su una copia appena clonata la cartella
   non esiste e `new Database()` falliva con *"Cannot open database because the directory
@@ -172,7 +179,7 @@ Combattimento vero: 4 goblin e un ogre contro Elara e Gorm, **sbagliando apposta
 | I PG entrano in combattimento sempre a PF pieni | I PF correnti fuori dal combattimento non si tracciano ancora | Quando servirà la continuità fra scontri |
 | Il 20 naturale si registra solo dagli attacchi dello stat block | I PG tirano coi dadi veri: il DM segna «colpo critico» a mano | Se servisse un tiro d'attacco per i PG |
 | `campaigns.partyLevel` non più usato | Il livello si deriva dai PG (`partyProfile`) | Rimuoverlo con una migrazione quando si tocca SPEC-0002 |
-| Migrazioni applicate automaticamente all'avvio | L'utente è un DM, non uno sviluppatore: non deve incontrare un "no such table" | Se l'app diventasse multi-processo |
+| Migrazioni applicate automaticamente all'avvio | L'utente è un DM, non uno sviluppatore. Sicure fra processi con un lock (ADR-0010) | — |
 | Analisi degli import via regex nel guard | Zero dipendenze per proteggere 2 invarianti semplici | Se compaiono falsi negativi → `ts-morph` + ADR |
 | Solo 1 background e 9 razze | È tutto ciò che contiene l'SRD | M6, con Open5e |
 | Nessun import da D&D Beyond | Zona grigia ToS | Import/export JSON generico in M6 |

@@ -6,12 +6,12 @@
  * e più sicuro di un upsert riga per riga — e rende l'import **idempotente per
  * costruzione** (SPEC-0003 AC3).
  */
-import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { SRD_DATASETS, SRD_DATA_DIR } from './datasets';
 import * as schema from '@/db/schema';
+import { databasePath, openDatabase } from '@/db/open';
 import {
   normalizeMonster,
   normalizeSpell,
@@ -55,13 +55,10 @@ function main(): void {
     );
   }
 
-  const dbPath = process.env.JUMPMASTER_DB ?? resolve(process.cwd(), 'data/jumpmaster.db');
-  if (!existsSync(dbPath)) {
-    throw new Error(`Database non trovato in ${dbPath}.\n  Esegui prima:  npm run db:migrate`);
-  }
-
-  const sqlite = new Database(dbPath);
-  sqlite.pragma('foreign_keys = ON');
+  // Crea il database e applica le migrazioni se serve: `npm run setup` deve funzionare su una
+  // copia appena clonata, prima ancora che l'app sia mai partita.
+  const dbPath = databasePath();
+  const sqlite = openDatabase(dbPath);
   const db = drizzle(sqlite, { schema, casing: 'snake_case' });
 
   console.log('\n  📚 Importo l’SRD 5.1 nel database\n');

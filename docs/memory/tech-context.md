@@ -27,7 +27,8 @@ npm run dev       # http://localhost:3000
 ```
 
 Il database finisce in `data/jumpmaster.db` (in `.gitignore`). La cartella e le tabelle si
-creano da sole al primo avvio: `src/db/client.ts` crea la directory e applica le migrazioni.
+creano da sole al primo avvio: `openDatabase()` in `src/db/open.ts` crea la directory e applica le
+migrazioni **sotto un lock fra processi** (ADR-0010), usato da app, `db:migrate` e `srd:import`.
 
 ## Dati SRD
 

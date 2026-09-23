@@ -99,6 +99,11 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - I percorsi su disco calcolati a runtime vanno marcati `/* turbopackIgnore: true */`, altrimenti
   la build traccia l'intero progetto. Per le immagini c'è un solo punto: `uploadPath()`.
 - Le immagini si validano sui **byte iniziali**, mai su estensione o tipo dichiarato.
+- **Il database si apre SOLO con `openDatabase()`** (`src/db/open.ts`): migrazioni sotto un lock
+  fra processi (ADR-0010). Mai `new Database()` diretto in un nuovo script.
+- **Una prova che passa non esclude una race.** Le build «da clone fresco» passavano sei su sei
+  mentre la CI falliva. Quando qualcosa gira in più processi, si verifica **forzando la
+  concorrenza** (in scratchpad c'è una batteria di otto processi).
 - Nel pannello del browser di Claude i click sintetici non raggiungono React: per provare
   l'interattività serve invocare il gestore o usare il setter nativo del valore. **Non è un bug
   dell'app** — verificato che i gestori funzionano.
