@@ -76,8 +76,10 @@ iniziativa, tiri salvezza, **Percezione / Indagare / Intuizione passive**.
 - [x] **AC12** — Mostra i tiri salvezza di tutto il gruppo in tabella, per risolvere in un colpo solo
       un effetto ad area.
 - [ ] **AC13** — È leggibile a schermo condiviso: corpo ≥ 16px, contrasto ≥ 4.5:1.
-- [ ] **AC14** — Il livello medio del gruppo si propaga alla campagna, dove lo userà il costruttore
-      di scontri (SPEC-0006).
+- [x] **AC14** — Il livello medio del gruppo è disponibile al costruttore di scontri (SPEC-0006).
+      *Rivisto in corso d'opera*: invece di **propagarlo** alla campagna lo si **deriva** dai PG a ogni
+      richiesta (`partyProfile`). Salvarlo avrebbe creato una seconda fonte di verità, esattamente ciò
+      che il design di questa stessa spec vieta per i valori calcolati.
 
 ## Fuori ambito
 
@@ -99,4 +101,4 @@ Slot incantesimo. Import da D&D Beyond.
 - Tiri salvezza di tutto il gruppo in tabella, competenti in grassetto (AC12).
 
 **Da provare**: AC7 (modifica ed eliminazione), AC8 (cambio di campagna), AC13 (Discord),
-AC14 (propagazione del livello medio — verrà provata col costruttore di scontri).
+AC14 verificato col costruttore di scontri: «2 PG di livello 5» letti dalle schede.

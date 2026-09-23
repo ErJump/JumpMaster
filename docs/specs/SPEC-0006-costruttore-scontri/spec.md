@@ -48,23 +48,39 @@ Cinque fasce, ognuna con una frase che dice **cosa aspettarsi**:
 
 ## Criteri di accettazione
 
-- [ ] **AC1** — Posso creare uno scontro con un nome e aggiungere mostri dal bestiario, con una
+- [x] **AC1** — Posso creare uno scontro con un nome e aggiungere mostri dal bestiario, con una
       quantità per ciascuno.
-- [ ] **AC2** — Vedo i PE totali, il fattore applicato per il numero di mostri, il riferimento del
+- [x] **AC2** — Vedo i PE totali, il fattore applicato per il numero di mostri, il riferimento del
       gruppo e la fascia risultante. **Nessun numero senza spiegazione.**
-- [ ] **AC3** — La stima si aggiorna **all'istante** mentre aggiungo o tolgo mostri.
-- [ ] **AC4** — L'interfaccia dichiara apertamente che è una stima dell'app, **non** una regola
+- [x] **AC3** — La stima si aggiorna **all'istante** mentre aggiungo o tolgo mostri.
+- [x] **AC4** — L'interfaccia dichiara apertamente che è una stima dell'app, **non** una regola
       ufficiale, e che i numeri non combaceranno con quelli della Guida del DM.
-- [ ] **AC5** — La stima usa il livello e la dimensione del gruppo presi dai PG della campagna
+- [x] **AC5** — La stima usa il livello e la dimensione del gruppo presi dai PG della campagna
       (SPEC-0005), non un valore digitato a mano.
 - [ ] **AC6** — Se nella campagna non c'è nessun PG, lo scontro si può comporre lo stesso ma la
       stima spiega che le manca il gruppo di riferimento.
 - [ ] **AC7** — Posso salvare, riaprire, modificare ed eliminare uno scontro.
-- [ ] **AC8** — Ogni riga mostra il mostro con GS, PE e punti ferita, e porta alla sua scheda.
+- [x] **AC8** — Ogni riga mostra il mostro con GS, PE e punti ferita, e porta alla sua scheda.
 - [ ] **AC9** — Da uno scontro posso **avviare il combattimento** (SPEC-0007) con un clic.
-- [ ] **AC10** — La somma dei PE e la fascia sono calcolate da `core/rules` con test sui casi limite.
-- [ ] **AC11** — Gli scontri appartengono alla campagna attiva.
+- [x] **AC10** — La somma dei PE e la fascia sono calcolate da `core/rules` con test sui casi limite.
+- [x] **AC11** — Gli scontri appartengono alla campagna attiva.
 
 ## Fuori ambito
 
 Generazione automatica di scontri. Mostri personalizzati. Tesori (M4). Scontri sociali o esplorativi.
+
+## Stato della verifica — 2026-09-23
+
+Risultati **calcolati a mano prima** di guardare lo schermo, poi confrontati:
+
+| Passo | Atteso | Mostrato |
+|---|---|---|
+| 4 goblin contro 2 PG di livello 5 | 200 PE × 1,62 = 324 · riferimento 900 · rapporto 0,36 · **Banale** | identico |
+| \+ 1 ogre | 650 PE × 1,76 = 1.144 · rapporto 1,27 · **Impegnativo** | identico |
+
+- Il riferimento viene dai PG veri della campagna, non da un numero digitato (AC5).
+- La stima si aggiorna a ogni clic, senza viaggi al server (AC3).
+- **Salvataggio automatico** verificato ricaricando la pagina: mostri e quantità ancora lì (AC7, in parte).
+
+**Da provare**: AC6 (campagna senza PG), AC7 (modifica ed eliminazione dello scontro),
+AC9 (avvio del combattimento — arriva con SPEC-0007).

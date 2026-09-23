@@ -51,6 +51,14 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M2 — slice `encounters` (provata nel browser)
+
+- Costruttore con ricerca sui 334 mostri e **stima istantanea** della difficoltà, che mostra
+  tutti i passaggi e dichiara di essere una stima propria (ADR-0008).
+- Verificato contro calcoli fatti a mano prima: 4 goblin → Banale (rapporto 0,36);
+  \+ 1 ogre → Impegnativo (1,27). Identici al centesimo.
+- Salvataggio automatico a ogni modifica, verificato ricaricando la pagina.
+
 ### M2 — slice `characters` (provata nel browser)
 
 - Schede PG con i sei punteggi e le competenze: **tutto il resto lo calcola l'app**. Verificato
@@ -80,7 +88,7 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 
 ## 🔄 In corso
 
-- **M2**: core e `characters` fatti. Mancano `encounters` e `combat`.
+- **M2**: core, `characters` e `encounters` fatti. Manca `combat`.
 - **M1**: SPEC-0001 e SPEC-0003 chiuse. Restano da provare a mano alcuni criteri di
   SPEC-0002 (elenco, modifica, eliminazione, stato vuoto con più campagne) e di SPEC-0004
   (pulsanti rapidi, interruttori vantaggio, tiro segreto, Invio).
@@ -132,6 +140,7 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 | ~190 KB di testo regole spediti al client | Serve per la ricerca a pieno testo; su localhost non si nota | Se l'app venisse ospitata in rete |
 | Parser markdown scritto a mano | Il sottoinsieme SRD è chiuso e noto; evita un albero di dipendenze | Se servisse markdown completo |
 | Attacchi degli stat block non ancora cliccabili | Il motore dei dadi è pronto, ma è materia di M2 | M2, col combat tracker |
+| `campaigns.partyLevel` non più usato | Il livello si deriva dai PG (`partyProfile`) | Rimuoverlo con una migrazione quando si tocca SPEC-0002 |
 | Migrazioni applicate automaticamente all'avvio | L'utente è un DM, non uno sviluppatore: non deve incontrare un "no such table" | Se l'app diventasse multi-processo |
 | Analisi degli import via regex nel guard | Zero dipendenze per proteggere 2 invarianti semplici | Se compaiono falsi negativi → `ts-morph` + ADR |
 | Solo 1 background e 9 razze | È tutto ciò che contiene l'SRD | M6, con Open5e |

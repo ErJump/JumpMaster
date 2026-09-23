@@ -7,8 +7,8 @@
 
 ## Su cosa si sta lavorando
 
-**M2 — Il Tavolo.** Core completo e testato. **Slice `characters` fatta e provata** (PG, PNG,
-Party Dashboard). Mancano `encounters` e `combat`.
+**M2 — Il Tavolo.** Core completo e testato. Slice **`characters`** e **`encounters`** fatte e
+provate nel browser. Manca **`combat`**, il combat tracker.
 
 M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 
@@ -31,7 +31,7 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 
 1. ✅ Schema M2 + migrazione `0001_m2-tavolo`
 2. ✅ Slice `characters` + **Party Dashboard** (SPEC-0005)
-3. Slice `encounters` con il misuratore di difficoltà (SPEC-0006)
+3. ✅ Slice `encounters` con il misuratore di difficoltà (SPEC-0006)
 4. Slice `combat` — il combat tracker (SPEC-0007), la feature più importante dell'app
 5. **Prova su Discord** a schermo condiviso — serve Giampiero
 
@@ -54,6 +54,10 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
   come parametro, ed è la pagina in `app/` a leggere la campagna attiva e passarla.
 - La Party Dashboard ha una voce di menu propria (`partyFeature`) ma vive nella slice
   `characters`: è una vista sugli stessi dati, non una feature a sé.
+- **Il livello del gruppo si deriva, non si salva**: `partyProfile` lo calcola dai PG. Il campo
+  `campaigns.partyLevel` di SPEC-0002 resta ma non è usato dalla stima — candidato a rimozione.
+- Gli scontri si salvano **a ogni clic**, senza pulsante «Salva». Il client manda solo
+  `{slug, count}`: PE, PF e CA li rilegge il server dall'SRD.
 
 ## Trappole note
 
