@@ -24,7 +24,11 @@ interface HistoryEntry {
   at: string;
 }
 
-export function DiceRoller() {
+/**
+ * @param onPublicRoll Se presente, i tiri **non segreti** compaiono anche sulla Vista Giocatori
+ *   (SPEC-0008 AC15). Lo passa il livello `app/`: la slice `dice` non conosce la slice `player`.
+ */
+export function DiceRoller({ onPublicRoll }: { onPublicRoll?: (text: string) => Promise<void> } = {}) {
   const [notation, setNotation] = useState('1d20');
   const [mode, setMode] = useState<AdvantageMode>('normal');
   const [secret, setSecret] = useState(false);
@@ -51,6 +55,11 @@ export function DiceRoller() {
           ...previous,
         ].slice(0, HISTORY_LIMIT),
       );
+
+      if (!secret && onPublicRoll) {
+        const flair = result.natural20 ? ' — 20 naturale!' : result.natural1 ? ' — 1 naturale' : '';
+        void onPublicRoll(`🎲 ${finalNotation} = ${result.total}${flair}`);
+      }
     } catch (caught) {
       // I messaggi del parser sono già in italiano e scritti per il DM, non per lo sviluppatore.
       setError(caught instanceof DiceParseError ? caught.message : 'Non riesco a leggere questo tiro.');
@@ -145,7 +154,9 @@ export function DiceRoller() {
                 className="accent-[var(--jm-gold)]"
               />
               Tiro segreto
-              <span className="text-ink-faint text-sm">(non finirà nella Vista Giocatori)</span>
+              <span className="text-ink-faint text-sm">
+                {onPublicRoll ? '(gli altri compaiono sulla Vista Giocatori)' : '(non finirà nella Vista Giocatori)'}
+              </span>
             </label>
           </div>
         </form>

@@ -31,3 +31,4 @@ file da dieci righe, non vale l'installazione.
 | [0006](./ADR-0006-eslint-9-non-10.md) | ESLint 9 invece di 10 | accepted |
 | [0007](./ADR-0007-typed-routes-disattivati.md) | `typedRoutes` disattivato | accepted |
 | [0008](./ADR-0008-bilanciamento-scontri.md) | Bilanciamento scontri senza le tabelle della Guida del DM | accepted |
+| [0009](./ADR-0009-sse-con-ricalcolo.md) | Vista Giocatori: SSE con ricalcolo periodico | accepted |

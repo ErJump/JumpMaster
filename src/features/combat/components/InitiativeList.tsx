@@ -74,6 +74,7 @@ export function InitiativeList({
                 <HitPointBar combatant={combatant} />
 
                 <div className="mt-1 flex flex-wrap gap-1">
+                  {combatant.hidden && <Tag tone="arcane">🙈 nascosto</Tag>}
                   {combatant.status === 'dead' && <Tag tone="wax">💀 morto</Tag>}
                   {combatant.status === 'unconscious' && (
                     <Tag tone="wax">

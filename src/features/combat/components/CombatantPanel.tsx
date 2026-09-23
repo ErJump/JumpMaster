@@ -47,7 +47,24 @@ export function CombatantPanel({
   return (
     <div className="space-y-5">
       <header className="flex flex-wrap items-baseline justify-between gap-3">
-        <h2 className="text-gold text-3xl">{combatant.name}</h2>
+        <div className="flex flex-wrap items-baseline gap-3">
+          <h2 className="text-gold text-3xl">{combatant.name}</h2>
+          {/* Un'imboscata non ancora scattata: il combattente sparisce dalla Vista Giocatori
+              finché il DM non lo rivela (SPEC-0008 AC9). */}
+          <button
+            type="button"
+            onClick={() => dispatch({ type: 'visibility-set', id, hidden: !combatant.hidden })}
+            aria-pressed={combatant.hidden}
+            title={combatant.hidden ? 'Rivela ai giocatori' : 'Nascondi ai giocatori'}
+            className={`small-caps rounded-xs border px-2 py-0.5 text-sm transition-colors ${
+              combatant.hidden
+                ? 'border-arcane text-arcane bg-arcane/10'
+                : 'border-border-strong text-ink-faint hover:text-ink'
+            }`}
+          >
+            {combatant.hidden ? '🙈 nascosto ai giocatori' : '👁 visibile ai giocatori'}
+          </button>
+        </div>
         <p className="font-mono text-3xl tabular-nums">
           <span className={combatant.currentHp === 0 ? 'text-wax' : 'text-ink'}>{combatant.currentHp}</span>
           <span className="text-ink-faint text-xl"> / {combatant.maxHp} PF</span>

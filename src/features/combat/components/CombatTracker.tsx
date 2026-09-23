@@ -42,6 +42,8 @@ function describe(event: CombatEvent | undefined): string {
       return 'tiro contro morte';
     case 'note':
       return 'tiro di dado';
+    case 'visibility-set':
+      return event.hidden ? 'nascosto' : 'rivelato';
     default:
       return 'ultima azione';
   }

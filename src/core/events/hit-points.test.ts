@@ -17,6 +17,7 @@ function pc(overrides: Partial<Combatant> = {}): Combatant {
     concentration: null,
     deathSaves: { successes: 0, failures: 0 },
     status: 'active',
+    hidden: false,
     ...overrides,
   };
 }

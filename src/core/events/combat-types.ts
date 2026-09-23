@@ -29,6 +29,8 @@ export interface Combatant {
   concentration: { spell: string } | null;
   deathSaves: DeathSaves;
   status: CombatantStatus;
+  /** Nascosto ai giocatori: un'imboscata non ancora scattata (SPEC-0008 AC9). */
+  hidden: boolean;
   srdMonsterSlug?: string;
   characterId?: number;
 }
@@ -50,6 +52,7 @@ export type CombatEvent =
       characterId?: number;
     }
   | { type: 'combatant-remove'; id: string }
+  | { type: 'visibility-set'; id: string; hidden: boolean }
   | { type: 'initiative-set'; id: string; value: number }
   | { type: 'damage'; id: string; amount: number; critical?: boolean; source?: string }
   | { type: 'heal'; id: string; amount: number }

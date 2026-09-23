@@ -92,6 +92,7 @@ export function reduceCombat(events: readonly CombatEvent[]): CombatState {
             concentration: null,
             deathSaves: { successes: 0, failures: 0 },
             status: 'active',
+            hidden: false,
             ...(event.srdMonsterSlug ? { srdMonsterSlug: event.srdMonsterSlug } : {}),
             ...(event.characterId !== undefined ? { characterId: event.characterId } : {}),
           },
@@ -112,6 +113,14 @@ export function reduceCombat(events: readonly CombatEvent[]): CombatState {
         if (turnIndex >= combatants.length) turnIndex = 0;
 
         if (target) say(`${target.name} esce dal combattimento.`);
+        break;
+      }
+
+      case 'visibility-set': {
+        const target = find(event.id);
+        if (!target || target.hidden === event.hidden) break;
+        replace(event.id, { ...target, hidden: event.hidden });
+        say(event.hidden ? `${target.name} è nascosto ai giocatori.` : `${target.name} si rivela!`);
         break;
       }
 

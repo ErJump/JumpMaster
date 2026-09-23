@@ -48,7 +48,7 @@ Un parser e un motore per la notazione standard, più un'interfaccia essenziale.
 - [ ] **AC5** — Pulsanti rapidi per d4, d6, d8, d10, d12, d20, d100.
 - [ ] **AC6** — Interruttori vantaggio/svantaggio che riscrivono il tiro in `2d20kh1` / `2d20kl1`.
 - [x] **AC7** — Cronologia degli ultimi 50 tiri, con la possibilità di ripetere un tiro con un clic.
-- [ ] **AC8** — Modalità **tiro segreto**: il risultato non finirà nella Vista Giocatori (M3).
+- [x] **AC8** — Modalità **tiro segreto**: il risultato non finirà nella Vista Giocatori (M3).
 - [ ] **AC9** — Invio lancia; il campo mantiene il fuoco per tirare di nuovo subito.
 - [x] **AC10** — I limiti sono sensati: max 100 dadi e max 1000 facce, con errore chiaro oltre.
 - [x] **AC11** — Test unitari su parser e motore, con generatore casuale **iniettabile** per rendere i
@@ -68,6 +68,8 @@ disattivati su un tiro che non è un d20 (AC2, AC3, AC7).
 messaggi in italiano, i limiti, il 20 e l'1 naturale — compreso il caso sottile «un 20 scartato
 con svantaggio non è un critico» (AC1, AC4, AC10, AC11).
 
-**Da provare a mano**: AC5 (pulsanti rapidi), AC6 (interruttori vantaggio), AC8 (tiro segreto),
+**AC8 chiuso in M3**: il tiro segreto non arriva alla Vista Giocatori, quello pubblico sì (SPEC-0008 AC15).
+
+**Da provare a mano**: AC5 (pulsanti rapidi), AC6 (interruttori vantaggio),
 AC9 (Invio e fuoco che resta). Implementati, ma i click sintetici del pannello del browser non
 raggiungono React, quindi servono clic veri.

@@ -1,7 +1,13 @@
 import { PageHeader, Panel } from '@/ui/components/primitives';
 import { DiceRoller } from '@/features/dice/components/DiceRoller';
+import { getActiveCampaign } from '@/features/campaigns/queries';
+import { publishRoll } from '@/features/player/actions';
 
 export default function DicePage() {
+  const campaign = getActiveCampaign();
+  // Senza campagna attiva non c'è una Vista Giocatori a cui mandare i tiri.
+  const onPublicRoll = campaign ? publishRoll.bind(null, campaign.id) : undefined;
+
   return (
     <div className="mx-auto w-full max-w-5xl">
       <PageHeader
@@ -9,7 +15,7 @@ export default function DicePage() {
         subtitle="Per i tiri scomodi da fare a mano: i PF di otto goblin, un tiro segreto, una tabella casuale. Per il resto, usa quelli veri."
       />
       <Panel className="p-6">
-        <DiceRoller />
+        <DiceRoller onPublicRoll={onPublicRoll} />
       </Panel>
 
       <Panel className="mt-6 p-6">

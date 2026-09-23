@@ -72,6 +72,16 @@
       "features": [
         "combat"
       ]
+    },
+    {
+      "id": "SPEC-0008",
+      "dir": "SPEC-0008-vista-giocatori",
+      "title": "Vista Giocatori",
+      "milestone": "M3",
+      "status": "in-progress",
+      "features": [
+        "player"
+      ]
     }
   ]
 }

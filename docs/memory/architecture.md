@@ -35,6 +35,7 @@ registrare una voce di menu* — mai toccare quindici file sparsi.
 | I4 | `better-sqlite3` solo lato server | Modulo nativo: rompe il bundle client |
 | I5 | Tabelle `srd_*` in sola lettura a runtime | Rigenerabili; dati utente mai mescolati con SRD |
 | I6 | Ogni tabella di dominio ha `campaign_id` | Isolamento fra campagne senza logica speciale |
+| I7 | Una lettura usata da **più slice** sta in `src/db/queries/`, non in una delle slice | È il modo di condividere dati senza violare I2 (es. il registro del combattimento, letto da `combat` e da `player`) |
 
 ## Decisioni portanti
 

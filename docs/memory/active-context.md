@@ -7,9 +7,11 @@
 
 ## Su cosa si sta lavorando
 
-**M2 — Il Tavolo: funzionante.** Personaggi, Party Dashboard, costruttore di scontri e
-**combat tracker** fatti e provati giocando un combattimento vero. Restano da provare a mano
-tre criteri di SPEC-0007 (PF tirati, condizioni, leggendari) e la prova su Discord.
+**M3 — Vista Giocatori: funzionante.** Seconda finestra sincronizzata via SSE, mostri a fasce
+senza numeri, combattenti nascosti, handout con immagini, regia del DM, tiri pubblici. Provata
+a due finestre affiancate. Resta da provare la riconnessione dopo un riavvio.
+
+M2 funzionante (restano criteri residui da provare a mano) · M1 e M0 completi.
 
 M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 
@@ -36,7 +38,9 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 4. ✅ Slice `combat` — il combat tracker (SPEC-0007)
 5. **Prova su Discord** a schermo condiviso — serve Giampiero
 6. Provare a mano i criteri rimasti di SPEC-0005/0006/0007, poi chiuderle
-7. **M3 — Vista Giocatori**: gli eventi del combattimento sono già il flusso da trasmettere via SSE
+7. ✅ **M3 — Vista Giocatori**
+8. **Prova su Discord con la Vista Giocatori** — è il test che conta davvero per M3
+9. **M4 — Narrativa**: note wiki, prep stile Lazy DM, generatori
 
 ## Decisioni recenti da ricordare
 
@@ -67,6 +71,15 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - Gli eventi di preparazione sono marcati `setup` nel payload e **non si annullano**:
   annullandoli sparirebbero i combattenti.
 - I mostri morti **non hanno turno**; i PG privi di sensi sì (tirano i salvezza contro morte).
+- **Vista Giocatori (ADR-0009)**: SSE che ricalcola la vista pubblica ogni 500 ms e la invia solo
+  se cambia. Nessun bus in memoria. `buildPlayerView` è l'**unico** punto che decide cosa è
+  pubblico, e `PublicCombatant` è un **tipo diverso** da `Combatant`: i campi riservati non
+  esistono, non vengono filtrati dopo.
+- **Modalità automatica**: la Vista mostra il combattimento se ce n'è uno `running`. Così il
+  combat tracker non sa nulla della Vista (I2).
+- **Invariante I7**: una lettura usata da più slice sta in `src/db/queries/` (es. il registro del
+  combattimento, letto da `combat` e da `player`).
+- Il **nome dello scontro** non va mai ai giocatori: è un dato del DM e può essere uno spoiler.
 
 ## Trappole note
 
@@ -83,6 +96,9 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 - React 19 vieta di scrivere un ref durante il render: per le scorciatoie da tastiera si usa
   `useEffectEvent` (stabile in React 19.3).
 - Per provare un 20 naturale nel browser si forza `Math.random = () => 0.999` per un solo tiro.
+- I percorsi su disco calcolati a runtime vanno marcati `/* turbopackIgnore: true */`, altrimenti
+  la build traccia l'intero progetto. Per le immagini c'è un solo punto: `uploadPath()`.
+- Le immagini si validano sui **byte iniziali**, mai su estensione o tipo dichiarato.
 - Nel pannello del browser di Claude i click sintetici non raggiungono React: per provare
   l'interattività serve invocare il gestore o usare il setter nativo del valore. **Non è un bug
   dell'app** — verificato che i gestori funzionano.
@@ -94,7 +110,7 @@ M0 completa (SPEC-0001 chiusa) · M1 funzionante e offline (SPEC-0003 chiusa).
 | M0 | Fondamenta | ✅ completa |
 | M1 | Compendio (SRD, campagne, regole, dadi) | 🔄 funzionante e offline; restano criteri da provare a mano |
 | M2 | Il Tavolo (party, encounter builder, combat tracker) | 🔄 funzionante, criteri residui da provare |
-| M3 | Vista Giocatori (SSE, Discord) | ⏳ |
+| M3 | Vista Giocatori (SSE, Discord) | ✅ funzionante, manca la prova di riconnessione |
 | M4 | Narrativa (note, prep Lazy DM, generatori) | ⏳ |
 | M5 | Mappe (battlemap, fog of war) | ⏳ |
 | M6 | Integrazioni (Open5e, audio, Tauri) | ⏳ |

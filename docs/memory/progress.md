@@ -51,6 +51,18 @@ _(Verificato eseguendolo davvero — non solo "compila".)_
 - **L'hook `pre-commit` blocca davvero**: provato un commit su `src/` senza aggiornare il
   memory bank → rifiutato, commit non avvenuto.
 
+### M3 — Vista Giocatori (provata a due finestre)
+
+- Finestra separata `/player`, tipografia maggiorata, aggiornata via **SSE senza ricaricare**.
+- Avviando un combattimento la Vista passa **da sola** al combattimento (modalità automatica).
+- **Stream SSE letto a mano**: nessun PF dei mostri, nessuna CA, nessuno stat block, nessun
+  nome dello scontro. Mostri a fasce, PG coi numeri.
+- Combattente nascosto → sparisce; il suo turno non evidenzia nessuno.
+- Handout con immagine caricata dal PC; SVG travestito da PNG **rifiutato**; ogni percorso
+  malevolo verso `/api/uploads` restituisce 404.
+- Regia con anteprima dal vivo (la pagina dei giocatori, rimpicciolita), Oscura e Automatica.
+- Tiro pubblico sulla Vista, tiro segreto no — chiude anche SPEC-0004 AC8.
+
 ### M2 — slice `combat`, il combat tracker (provato giocando)
 
 Combattimento vero: 4 goblin e un ogre contro Elara e Gorm, **sbagliando apposta e annullando**.
@@ -102,6 +114,7 @@ Combattimento vero: 4 goblin e un ogre contro Elara e Gorm, **sbagliando apposta
 
 ## 🔄 In corso
 
+- **M3**: da provare la riconnessione dopo un riavvio dell'app (AC3).
 - **M2**: tutte e tre le slice fatte e provate. Da provare a mano: SPEC-0007 AC2 (PF tirati),
   AC9 (condizioni), AC15 (leggendari); SPEC-0005 AC7/AC8; SPEC-0006 AC6/AC7.
 - **M1**: SPEC-0001 e SPEC-0003 chiuse. Restano da provare a mano alcuni criteri di
@@ -154,6 +167,8 @@ Combattimento vero: 4 goblin e un ogre contro Elara e Gorm, **sbagliando apposta
 | Ricerca lato client invece che FTS5 | Su queste quantità è istantaneo e non richiede viaggi al server | Se il contenuto cresce con Open5e (M6) |
 | ~190 KB di testo regole spediti al client | Serve per la ricerca a pieno testo; su localhost non si nota | Se l'app venisse ospitata in rete |
 | Parser markdown scritto a mano | Il sottoinsieme SRD è chiuso e noto; evita un albero di dipendenze | Se servisse markdown completo |
+| Durante il turno di un nascosto la Vista non evidenzia nessuno | Evidenziare un altro sarebbe falso, mostrarlo lo tradirebbe | Accettato (SPEC-0008) |
+| La Vista ricalcola ogni 500 ms per finestra aperta | Robusto e semplice (ADR-0009); su SQLite locale costa microsecondi | Se si ospitasse con molte finestre aperte |
 | I PG entrano in combattimento sempre a PF pieni | I PF correnti fuori dal combattimento non si tracciano ancora | Quando servirà la continuità fra scontri |
 | Il 20 naturale si registra solo dagli attacchi dello stat block | I PG tirano coi dadi veri: il DM segna «colpo critico» a mano | Se servisse un tiro d'attacco per i PG |
 | `campaigns.partyLevel` non più usato | Il livello si deriva dai PG (`partyProfile`) | Rimuoverlo con una migrazione quando si tocca SPEC-0002 |

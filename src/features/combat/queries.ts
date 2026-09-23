@@ -1,33 +1,11 @@
 import 'server-only';
-import { and, asc, eq, inArray, isNull } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '@/db/client';
-import { combatEvents, encounters, srdMonsters, type Encounter } from '@/db/schema';
-import type { CombatEvent } from '@/core/events';
+import { encounters, srdMonsters, type Encounter } from '@/db/schema';
 import type { SrdMonsterData } from '@/lib/srd-types';
 
-/** Un evento del registro, con l'indicazione se appartiene alla preparazione iniziale. */
-export interface StoredCombatEvent {
-  event: CombatEvent;
-  /**
-   * Gli eventi scritti da `startCombat` — avvio e ingresso dei combattenti — non si annullano:
-   * annullandoli sparirebbero i combattenti stessi, che non è mai ciò che il DM intende.
-   */
-  setup: boolean;
-}
-
-/** Gli eventi attivi, nell'ordine in cui sono avvenuti. Gli annullati restano fuori. */
-export function loadCombatEvents(encounterId: number): StoredCombatEvent[] {
-  return db
-    .select({ payload: combatEvents.payload })
-    .from(combatEvents)
-    .where(and(eq(combatEvents.encounterId, encounterId), isNull(combatEvents.undoneAt)))
-    .orderBy(asc(combatEvents.seq))
-    .all()
-    .map(({ payload }) => {
-      const { setup, ...event } = payload as CombatEvent & { setup?: boolean };
-      return { event: event as CombatEvent, setup: setup === true };
-    });
-}
+// La lettura del registro è condivisa con la Vista Giocatori: vive nel livello dati.
+export { loadCombatEvents, type StoredCombatEvent } from '@/db/queries/combat-log';
 
 export function getCombatEncounter(id: number): Encounter | undefined {
   return db.select().from(encounters).where(eq(encounters.id, id)).get();

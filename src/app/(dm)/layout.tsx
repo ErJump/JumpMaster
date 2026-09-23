@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Navigation } from '@/ui/components/Navigation';
 import { ThemeToggle } from '@/ui/components/ThemeToggle';
+import { OpenPlayerWindow } from '@/features/player/components/OpenPlayerWindow';
 import { getActiveCampaign } from '@/features/campaigns/queries';
 
 /**
@@ -54,7 +55,10 @@ export default function DmLayout({ children }: { children: React.ReactNode }) {
             )}
           </div>
 
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <OpenPlayerWindow />
+            <ThemeToggle />
+          </div>
         </header>
 
         <main className="flex min-h-0 flex-1 flex-col p-6">{children}</main>

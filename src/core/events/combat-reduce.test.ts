@@ -344,3 +344,24 @@ describe('reduceCombat — concentrazione mantenuta', () => {
     expect(state.log.at(-1)?.text).toContain('mantiene la concentrazione su Ragnatela');
   });
 });
+
+describe('reduceCombat — visibilità', () => {
+  it('nasconde e rivela, raccontandolo nel registro del DM', () => {
+    const state = reduceCombat([
+      add('a', 'Bandito', { initiative: 10 }),
+      { type: 'visibility-set', id: 'a', hidden: true },
+    ]);
+    expect(state.combatants[0]?.hidden).toBe(true);
+    const rivelato = reduceCombat([
+      add('a', 'Bandito', { initiative: 10 }),
+      { type: 'visibility-set', id: 'a', hidden: true },
+      { type: 'visibility-set', id: 'a', hidden: false },
+    ]);
+    expect(rivelato.combatants[0]?.hidden).toBe(false);
+    expect(rivelato.log.at(-1)?.text).toBe('Bandito si rivela!');
+  });
+
+  it('i nuovi combattenti sono visibili di default', () => {
+    expect(reduceCombat([add('a', 'X')]).combatants[0]?.hidden).toBe(false);
+  });
+});

@@ -29,6 +29,7 @@ export const clientCombatEventSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('turn-next') }),
   z.object({ type: z.literal('turn-prev') }),
   z.object({ type: z.literal('combatant-remove'), id }),
+  z.object({ type: z.literal('visibility-set'), id, hidden: z.boolean() }),
   z.object({ type: z.literal('note'), text: z.string().trim().min(1).max(500) }),
 ]);
 

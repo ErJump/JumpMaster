@@ -9,6 +9,7 @@ import { campaignsFeature } from './campaigns/feature.config';
 import { charactersFeature, partyFeature } from './characters/feature.config';
 import { encountersFeature } from './encounters/feature.config';
 import { combatFeature } from './combat/feature.config';
+import { playerFeature } from './player/feature.config';
 import { bestiaryFeature } from './bestiary/feature.config';
 import { spellsFeature } from './spells/feature.config';
 import { itemsFeature } from './items/feature.config';
@@ -23,6 +24,7 @@ export const FEATURES: readonly FeatureConfig[] = [
   partyFeature,
   encountersFeature,
   combatFeature,
+  playerFeature,
   bestiaryFeature,
   spellsFeature,
   itemsFeature,

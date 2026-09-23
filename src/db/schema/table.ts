@@ -147,3 +147,43 @@ export const combatEvents = sqliteTable(
 );
 
 export type CombatEventRow = typeof combatEvents.$inferSelect;
+
+/* ── Vista Giocatori (SPEC-0008) ──────────────────────────────────── */
+
+export const handouts = sqliteTable(
+  'handouts',
+  {
+    id: integer().primaryKey({ autoIncrement: true }),
+    campaignId: campaignId(),
+    title: text().notNull(),
+    body: text().notNull().default(''),
+    /** Nome generato dall'app, `<uuid>.<ext>` in `data/uploads/`. Mai quello scelto dall'utente. */
+    imageFile: text(),
+    createdAt: now(),
+    updatedAt: now(),
+  },
+  (t) => [index('idx_handouts_campaign').on(t.campaignId)],
+);
+
+export type Handout = typeof handouts.$inferSelect;
+
+/**
+ * Regia della Vista Giocatori: una riga per campagna.
+ *
+ * In modalità `auto` la Vista mostra il combattimento in corso, se c'è: così il combat tracker
+ * non deve sapere nulla della Vista (invariante I2, ADR-0009).
+ */
+export const liveState = sqliteTable('live_state', {
+  campaignId: integer()
+    .primaryKey()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
+  mode: text({ enum: ['auto', 'handout', 'blackout'] })
+    .notNull()
+    .default('auto'),
+  handoutId: integer().references(() => handouts.id, { onDelete: 'set null' }),
+  /** Ultimo tiro pubblico dalla pagina dei dadi: `{ text, at }`. */
+  lastRoll: text({ mode: 'json' }),
+  updatedAt: now(),
+});
+
+export type LiveState = typeof liveState.$inferSelect;
